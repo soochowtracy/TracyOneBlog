@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Think in Block | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Block BriefBlock是什么
+苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
+闭包就是能够读取其它函数内部变量的函数 —阮一峰
+普通函数能使用哪些变量：
+
+局部变量
+参数
+静态变量
+静态全局
+全局变量
+
+多次调用之间能够传递值得变量：
+
+静态变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Think in Block">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/07/Think-in-Block/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="Block BriefBlock是什么
+苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
+闭包就是能够读取其它函数内部变量的函数 —阮一峰
+普通函数能使用哪些变量：
+
+局部变量
+参数
+静态变量
+静态全局
+全局变量
+
+多次调用之间能够传递值得变量：
+
+静态变">
+<meta property="og:image" content="http://blog.tracyone.com/images/avatar.jpg">
+<meta property="og:updated_time" content="2015-06-07T13:23:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Think in Block">
+<meta name="twitter:description" content="Block BriefBlock是什么
+苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
+闭包就是能够读取其它函数内部变量的函数 —阮一峰
+普通函数能使用哪些变量：
+
+局部变量
+参数
+静态变量
+静态全局
+全局变量
+
+多次调用之间能够传递值得变量：
+
+静态变">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Architect</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        2
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        1
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-Think-in-Block" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Think in Block
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/07/Think-in-Block/">
+    <time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Block_Brief">Block Brief</h2><h3 id="Block是什么">Block是什么</h3><p><img src="/images/avatar.jpg" alt="试一试"></p>
+<p>苹果官网说法：<br>A block is an anonymous inline collection of code, and sometimes also called a “closure”.</p>
+<p>闭包就是能够读取其它函数内部变量的函数 —阮一峰</p>
+<p>普通函数能使用哪些变量：</p>
+<ul>
+<li>局部变量</li>
+<li>参数</li>
+<li>静态变量</li>
+<li>静态全局</li>
+<li>全局变量</li>
+</ul>
+<p>多次调用之间能够传递值得变量：</p>
+<ul>
+<li>静态变量</li>
+<li>静态全局</li>
+<li>全局变量</li>
+</ul>
+<a id="more"></a>
+<h3 id="BLock的用法和功能">BLock的用法和功能</h3><h5 id="语法">语法</h5><p>void (^)(void){<br>};<br>与C语言函数相比没有函数名，带有^；可省略很多部分。</p>
+<h5 id="变量">变量</h5><p>void (^var)(void)；<br>与C语言函数指针相比只是把*改成了^,Block变量和普通变量作用完全相同。</p>
+<ol>
+<li>通过typedef可以简化</li>
+<li>调用和C语言一样，变量名+小括号</li>
+</ol>
+<h5 id="capture">capture</h5><ol>
+<li>Block可以使用在它之前声明的局部变量，因此在执行Block时，即使已经改变了值，也不影响Block中截获的值。</li>
+<li>一般情况，Block只能保存声明时的瞬间值，保存后就不能修改了；如果需要改变则要附加__block.</li>
+<li>如果截获的是oc对象，使用是没有问题的，但是如果要重新赋值，则也必须加__block。</li>
+</ol>
+<h3 id="Block的实现">Block的实现</h3><h5 id="Block的本质">Block的本质</h5><pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>{
+
+    <span class="keyword">void</span> (^blk)(<span class="keyword">void</span>) = ^{
+        <span class="built_in">printf</span>(<span class="string">"Block\n"</span>);
+    };
+
+    blk();
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+
+<span class="preprocessor">#ifndef BLOCK_IMPL</span>
+<span class="preprocessor">#<span class="keyword">define</span> BLOCK_IMPL</span>
+<span class="keyword">struct</span> __block_impl {
+  <span class="keyword">void</span> *isa;
+  <span class="keyword">int</span> Flags;
+  <span class="keyword">int</span> Reserved;
+  <span class="keyword">void</span> *FuncPtr;
+};
+
+<span class="keyword">struct</span> __main_block_impl_0 {
+  <span class="keyword">struct</span> __block_impl impl;
+  <span class="keyword">struct</span> __main_block_desc_0* Desc;
+  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, <span class="keyword">int</span> flags=<span class="number">0</span>) {
+    impl.isa = &amp;_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
+
+        <span class="built_in">printf</span>(<span class="string">"Block\n"</span>);
+    }
+
+<span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
+  <span class="keyword">size_t</span> reserved;
+  <span class="keyword">size_t</span> Block_size;
+} __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0)};
+
+<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>{
+
+    <span class="keyword">void</span> (*blk)(<span class="keyword">void</span>) = (<span class="keyword">void</span> (*)())&amp;__main_block_impl_0((<span class="keyword">void</span> *)__main_block_func_0, &amp;__main_block_desc_0_DATA);
+
+    ((<span class="keyword">void</span> (*)(__block_impl *))((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><p>Block就是Objc的对象</p>
+<h5 id="如何截获自动变量">如何截获自动变量</h5><pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
+
+    <span class="keyword">int</span> dmy = <span class="number">256</span>;
+    <span class="keyword">int</span> <span class="keyword">var</span> = <span class="number">10</span>;
+    <span class="keyword">const</span> <span class="keyword">char</span> *fmt = <span class="string">"var = %d\n"</span>;
+
+    <span class="keyword">void</span> (^blk)(<span class="keyword">void</span>) = ^{
+        printf(fmt, <span class="keyword">var</span>);
+    };
+
+    <span class="keyword">var</span> = <span class="number">2</span>;
+    fmt = <span class="string">"Real var = %d\n"</span>;
+
+    blk();
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+
+<span class="keyword">struct</span> __main_block_impl_0 {
+  <span class="keyword">struct</span> __block_impl impl;
+  <span class="keyword">struct</span> __main_block_desc_0* Desc;
+  <span class="keyword">const</span> <span class="keyword">char</span> *fmt;
+  <span class="keyword">int</span> <span class="keyword">var</span>;
+  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, <span class="keyword">const</span> <span class="keyword">char</span> *_fmt, <span class="keyword">int</span> _var, <span class="keyword">int</span> flags=<span class="number">0</span>) : fmt(_fmt), <span class="keyword">var</span>(_var) {
+    impl.isa = &amp;_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
+  <span class="keyword">const</span> <span class="keyword">char</span> *fmt = __cself-&gt;fmt; <span class="comment">// bound by copy</span>
+  <span class="keyword">int</span> <span class="keyword">var</span> = __cself-&gt;<span class="keyword">var</span>; <span class="comment">// bound by copy</span>
+
+        printf(fmt, <span class="keyword">var</span>);
+    }
+
+<span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+} __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0)};
+<span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
+
+    <span class="keyword">int</span> dmy = <span class="number">256</span>;
+    <span class="keyword">int</span> <span class="keyword">var</span> = <span class="number">10</span>;
+    <span class="keyword">const</span> <span class="keyword">char</span> *fmt = <span class="string">"var = %d\n"</span>;
+
+    <span class="keyword">void</span> (*blk)(<span class="keyword">void</span>) = (<span class="keyword">void</span> (*)())&amp;__main_block_impl_0((<span class="keyword">void</span> *)__main_block_func_0, &amp;__main_block_desc_0_DATA, fmt, <span class="keyword">var</span>);
+
+    <span class="keyword">var</span> = <span class="number">2</span>;
+    fmt = <span class="string">"Real var = %d\n"</span>;
+
+    ((<span class="keyword">void</span> (*)(__block_impl *))((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><p>不能改写只是编译器检查，因为改了也没用。</p>
+<h3 id="__block作用">__block作用</h3><p>静态，全局静态，全局变量本身就可以访问（静态变量不是通过作用域，通过指针）</p>
+<pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
+
+    __block <span class="keyword">int</span> <span class="keyword">var</span> = <span class="number">10</span>;
+    <span class="keyword">void</span> (^blk)(<span class="keyword">void</span>) = ^{
+        <span class="keyword">var</span> = <span class="number">1</span>;
+    };
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+
+<span class="keyword">struct</span> __Block_byref_var_0 {
+  <span class="keyword">void</span> *__isa;
+__Block_byref_var_0 *__forwarding;
+ <span class="keyword">int</span> __flags;
+ <span class="keyword">int</span> __size;
+ <span class="keyword">int</span> <span class="keyword">var</span>;
+};
+
+<span class="keyword">struct</span> __main_block_impl_0 {
+  <span class="keyword">struct</span> __block_impl impl;
+  <span class="keyword">struct</span> __main_block_desc_0* Desc;
+  __Block_byref_var_0 *<span class="keyword">var</span>; <span class="comment">// by ref</span>
+  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, __Block_byref_var_0 *_var, <span class="keyword">int</span> flags=<span class="number">0</span>) : <span class="keyword">var</span>(_var-&gt;__forwarding) {
+    impl.isa = &amp;_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
+  __Block_byref_var_0 *<span class="keyword">var</span> = __cself-&gt;<span class="keyword">var</span>; <span class="comment">// bound by ref</span>
+
+        (<span class="keyword">var</span>-&gt;__forwarding-&gt;<span class="keyword">var</span>) = <span class="number">1</span>;
+    }
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_copy_0(<span class="keyword">struct</span> __main_block_impl_0*dst, <span class="keyword">struct</span> __main_block_impl_0*src) {_Block_object_assign((<span class="keyword">void</span>*)&amp;dst-&gt;<span class="keyword">var</span>, (<span class="keyword">void</span>*)src-&gt;<span class="keyword">var</span>, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);}
+
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_dispose_0(<span class="keyword">struct</span> __main_block_impl_0*src) {_Block_object_dispose((<span class="keyword">void</span>*)src-&gt;<span class="keyword">var</span>, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);}
+
+<span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  <span class="keyword">void</span> (*copy)(<span class="keyword">struct</span> __main_block_impl_0*, <span class="keyword">struct</span> __main_block_impl_0*);
+  <span class="keyword">void</span> (*dispose)(<span class="keyword">struct</span> __main_block_impl_0*);
+} __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0), __main_block_copy_0, __main_block_dispose_0};
+<span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
+
+    __attribute__((__blocks__(byref))) __Block_byref_var_0 <span class="keyword">var</span> = {(<span class="keyword">void</span>*)<span class="number">0</span>,(__Block_byref_var_0 *)&amp;<span class="keyword">var</span>, <span class="number">0</span>, <span class="keyword">sizeof</span>(__Block_byref_var_0), <span class="number">10</span>};
+    <span class="keyword">void</span> (*blk)(<span class="keyword">void</span>) = (<span class="keyword">void</span> (*)())&amp;__main_block_impl_0((<span class="keyword">void</span> *)__main_block_func_0, &amp;__main_block_desc_0_DATA, (__Block_byref_var_0 *)&amp;<span class="keyword">var</span>, <span class="number">570425344</span>);
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><ol>
+<li>Block超出变量作用域可存在？</li>
+<li>__block变量的结构体成员forwarding？</li>
+<li>copy 和 dispose的作用？</li>
+</ol>
+<h3 id="Block,__block存储域">Block,__block存储域</h3><p>Q:Block超出变量作用域可存在？</p>
+<p>A:</p>
+<ol>
+<li>配置在全局变量中得Block，在变量作用域之外也可以通过指针安全的使用</li>
+<li>在栈上得Block则是通过复制到堆上来解决的</li>
+<li>而<strong>block变量用 </strong>forward可以实现无论配置在哪都可以正确地访问 __block变量</li>
+<li>在ARC下，大多数情况下编译器会恰当的判断，自动将Block从栈上复制到堆上。（autorelease）</li>
+</ol>
+<p>Global:</p>
+<ol>
+<li>在全局变量声明区</li>
+<li>Block声明中没有截获局部变量时</li>
+</ol>
+<ul>
+<li>自动copy：</li>
+</ul>
+<p>Block作为函数的返回值时</p>
+<ul>
+<li>手动copy：</li>
+</ul>
+<p>向方法或函数的参数中传递Block（但是可以在函数中适当地copy就不必在传递前copy）（GCD中得）</p>
+<p>调用Copy时不同的Block对象究竟发生了什么：</p>
+<ol>
+<li>_NSConcreteStackBlock            ：从栈复制到堆</li>
+<li>_NSConcreteGlobalBlock            ：什么也不做</li>
+<li>_NSConcreteMallocBlock            ：引用计数增加</li>
+</ol>
+<p>调用Copy时不同的__block对象究竟发生了什么：</p>
+<ol>
+<li>栈            ：从栈复制到堆，并且被Block持有</li>
+<li>堆            ：被Block持有</li>
+</ol>
+<p>Q:__block变量的结构体成员forwarding？</p>
+<p>A:为了能够在不同位置的__block变量或者栈变量都能访问的是同一个变量</p>
+<h3 id="capture-1">capture</h3><p>正常情况下，C语言是不支持__strong修饰符的变量，不能很好地管理内存。但是runtime给了我们机会，</p>
+<p>让我们知道Block什么时候复制到堆上，什么时候会废弃。so，我们就用到了copy和dispose函数。</p>
+<p>只有在Block对象调用过copy后，Block才能持有截获的__strong类型的变量。</p>
+<p>很容易引起循环引用，如何解决：</p>
+<ol>
+<li>__weak修饰符</li>
+<li>__block修饰符（nil）</li>
+<li><strong>unsafe</strong>unretain</li>
+</ol>
+<p>非ARC下 __block不会持有对象。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block/" data-id="ciamhroyi00000432pvm29rl2" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block/#disqus_thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/block/">block</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/07/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/Think-in-Block/" class="thumbnail">
+  
+    <span style="background-image:url(/images/avatar.jpg
+)" alt="Think in Block" class="thumbnail-image"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block/" class="title">Think in Block</a></p>
+              <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/hello-world/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"></p>
+              <p class="item-title"><a href="/2015/06/07/hello-world/" class="title">Hello World</a></p>
+              <p class="item-date"><time datetime="2015-06-07T11:35:05.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/block/" style="font-size: 10px;">block</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script>
+  var disqus_shortname = 'tracyone';
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
