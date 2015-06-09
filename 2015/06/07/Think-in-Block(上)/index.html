@@ -3,58 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Think in Block | TracyOne</title>
+  <title>Think in Block(上) | TracyOne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Block BriefBlock是什么
-苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
-闭包就是能够读取其它函数内部变量的函数 —阮一峰
-普通函数能使用哪些变量：
-
-局部变量
-参数
-静态变量
-静态全局
-全局变量
-
-多次调用之间能够传递值得变量：
-
-静态变">
+  <meta name="description" content="Block 简介这不是一篇介绍如何使用Block的文章，主要想要探究一下系统背后Block发生了什么，主要参考的是《Objective-C高级编程》这本书，不过这本书本身也有些年代了，苹果实现的机制也有了一些改变。实践出真知，不清楚的地方自己动手试一下，会有意外地收获。
+Block是什么苹果官网说法：A block is an anonymous inline collection of code">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Think in Block">
-<meta property="og:url" content="http://blog.tracyone.com/2015/06/07/Think-in-Block/index.html">
+<meta property="og:title" content="Think in Block(上)">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/07/Think-in-Block(上)/index.html">
 <meta property="og:site_name" content="TracyOne">
-<meta property="og:description" content="Block BriefBlock是什么
-苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
-闭包就是能够读取其它函数内部变量的函数 —阮一峰
-普通函数能使用哪些变量：
-
-局部变量
-参数
-静态变量
-静态全局
-全局变量
-
-多次调用之间能够传递值得变量：
-
-静态变">
-<meta property="og:image" content="http://blog.tracyone.com/images/avatar.jpg">
-<meta property="og:updated_time" content="2015-06-07T13:23:51.000Z">
+<meta property="og:description" content="Block 简介这不是一篇介绍如何使用Block的文章，主要想要探究一下系统背后Block发生了什么，主要参考的是《Objective-C高级编程》这本书，不过这本书本身也有些年代了，苹果实现的机制也有了一些改变。实践出真知，不清楚的地方自己动手试一下，会有意外地收获。
+Block是什么苹果官网说法：A block is an anonymous inline collection of code">
+<meta property="og:updated_time" content="2015-06-09T13:22:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Think in Block">
-<meta name="twitter:description" content="Block BriefBlock是什么
-苹果官网说法：A block is an anonymous inline collection of code, and sometimes also called a “closure”.
-闭包就是能够读取其它函数内部变量的函数 —阮一峰
-普通函数能使用哪些变量：
-
-局部变量
-参数
-静态变量
-静态全局
-全局变量
-
-多次调用之间能够传递值得变量：
-
-静态变">
+<meta name="twitter:title" content="Think in Block(上)">
+<meta name="twitter:description" content="Block 简介这不是一篇介绍如何使用Block的文章，主要想要探究一下系统背后Block发生了什么，主要参考的是《Objective-C高级编程》这本书，不过这本书本身也有些年代了，苹果实现的机制也有了一些改变。实践出真知，不清楚的地方自己动手试一下，会有意外地收获。
+Block是什么苹果官网说法：A block is an anonymous inline collection of code">
   
   
     <link rel="icon" href="/favicon.png">
@@ -153,7 +116,7 @@
     
   </div>
 </aside>
-      <section id="main"><article id="post-Think-in-Block" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-Think-in-Block(上)" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -162,14 +125,14 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Think in Block
+      Think in Block(上)
     </h1>
   
 
         <div class="article-meta">
           <div class="article-date">
   <i class="fa fa-calendar"></i>
-  <a href="/2015/06/07/Think-in-Block/">
+  <a href="/2015/06/07/Think-in-Block(上)/">
     <time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time>
   </a>
 </div>
@@ -184,36 +147,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Block_Brief">Block Brief</h2><h3 id="Block是什么">Block是什么</h3><p><img src="/images/avatar.jpg" alt="试一试"></p>
-<p>苹果官网说法：<br>A block is an anonymous inline collection of code, and sometimes also called a “closure”.</p>
-<p>闭包就是能够读取其它函数内部变量的函数 —阮一峰</p>
-<p>普通函数能使用哪些变量：</p>
-<ul>
-<li>局部变量</li>
-<li>参数</li>
-<li>静态变量</li>
-<li>静态全局</li>
-<li>全局变量</li>
-</ul>
-<p>多次调用之间能够传递值得变量：</p>
-<ul>
-<li>静态变量</li>
-<li>静态全局</li>
-<li>全局变量</li>
-</ul>
+        <h2 id="Block_简介">Block 简介</h2><p>这不是一篇介绍如何使用Block的文章，主要想要探究一下系统背后Block发生了什么，主要参考的是《Objective-C高级编程》这本书，不过这本书本身也有些年代了，苹果实现的机制也有了一些改变。实践出真知，不清楚的地方自己动手试一下，会有意外地收获。</p>
+<h3 id="Block是什么">Block是什么</h3><p>苹果官网说法：<br>A block is an anonymous inline collection of code, and sometimes also called a “closure”.</p>
+<p>通俗的讲：<br>闭包就是能够读取其它函数内部变量的匿名函数</p>
+<p>与普通函数的区别：<br>普通函数能使用局部变量，参数，静态变量，静态全局，全局变量，并且有自己的函数名。<br>block除了能使用这些外还能使用其他函数内的变量，而且没有函数名。</p>
 <a id="more"></a>
 <h3 id="BLock的用法和功能">BLock的用法和功能</h3><h5 id="语法">语法</h5><p>void (^)(void){<br>};<br>与C语言函数相比没有函数名，带有^；可省略很多部分。</p>
 <h5 id="变量">变量</h5><p>void (^var)(void)；<br>与C语言函数指针相比只是把*改成了^,Block变量和普通变量作用完全相同。</p>
 <ol>
-<li>通过typedef可以简化</li>
-<li>调用和C语言一样，变量名+小括号</li>
+<li>通过typedef可以简化声明</li>
+<li>调用和C语言函数调用一样，变量名+小括号</li>
 </ol>
-<h5 id="capture">capture</h5><ol>
+<h5 id="截获变量">截获变量</h5><ol>
 <li>Block可以使用在它之前声明的局部变量，因此在执行Block时，即使已经改变了值，也不影响Block中截获的值。</li>
 <li>一般情况，Block只能保存声明时的瞬间值，保存后就不能修改了；如果需要改变则要附加__block.</li>
 <li>如果截获的是oc对象，使用是没有问题的，但是如果要重新赋值，则也必须加__block。</li>
 </ol>
-<h3 id="Block的实现">Block的实现</h3><h5 id="Block的本质">Block的本质</h5><pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>{
+<h3 id="Block的实现">Block的实现</h3><h5 id="Block的本质">Block的本质</h5><p>先看下源代码：</p>
+<pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>{
 
     <span class="keyword">void</span> (^blk)(<span class="keyword">void</span>) = ^{
         <span class="built_in">printf</span>(<span class="string">"Block\n"</span>);
@@ -222,46 +173,42 @@
     blk();
     <span class="keyword">return</span> <span class="number">0</span>;
 }
-
-<span class="preprocessor">#ifndef BLOCK_IMPL</span>
-<span class="preprocessor">#<span class="keyword">define</span> BLOCK_IMPL</span>
+</code></pre><p>很简单，简单地定义一个Block，赋给blk对象，然后调用这个Block，那么这段代码经过编译器编译过后，发生了什么呢？我们用Clang 命令 -rewirte-objc转换成c++看下编译器搞得什么鬼！</p>
+<p>首先是这一段，这段代码是编译器插入的代码，主要作用就是声明了一个结构体，这可以看成是我们的<code>Block类</code>的数据部分</p>
+<pre><code><span class="preprocessor">#ifndef BLOCK_IMPL</span>
+<span class="preprocessor">#define BLOCK_IMPL</span>
 <span class="keyword">struct</span> __block_impl {
   <span class="keyword">void</span> *isa;
   <span class="keyword">int</span> Flags;
   <span class="keyword">int</span> Reserved;
   <span class="keyword">void</span> *FuncPtr;
 };
-
-<span class="keyword">struct</span> __main_block_impl_0 {
-  <span class="keyword">struct</span> __block_impl impl;
+</code></pre><p>这一段则是系统给我们声明的真正的<code>Block类</code>，其中包括了数据部分和一些描述性内容，以及一个初始化函数。</p>
+<pre><code><span class="keyword">struct</span> __main_block_impl_0 {
+  <span class="keyword">struct</span> __block_impl <span class="keyword">impl</span>;
   <span class="keyword">struct</span> __main_block_desc_0* Desc;
-  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, <span class="keyword">int</span> flags=<span class="number">0</span>) {
-    impl.isa = &amp;_NSConcreteStackBlock;
-    impl.Flags = flags;
-    impl.FuncPtr = fp;
+  __main_block_impl_0(void *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, <span class="keyword">int</span> flags=<span class="number">0</span>) {
+    <span class="keyword">impl</span>.isa = &amp;_NSConcreteStackBlock;
+    <span class="keyword">impl</span>.Flags = flags;
+    <span class="keyword">impl</span>.FuncPtr = fp;
     Desc = desc;
   }
 };
-
-<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
+</code></pre><p>这一段则是赋值给Block变量中的那个函数的声明，其中会把self传入，这个很多语言都会这么处理，在内部使用self的时候能够找到真实地那个对象。</p>
+<pre><code><span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
 
         <span class="built_in">printf</span>(<span class="string">"Block\n"</span>);
     }
+</code></pre><p>这一段则是前面所说的描述性的内容，主要就是Block对象的大小，因为这个例子比较简单，复杂的情况这里还会生成其他的一些函数，后面会讲到。<br>    static struct <strong>main_block_desc_0 {<br>      size_t reserved;<br>      size_t Block_size;<br>    } </strong>main_block_desc_0_DATA = { 0, sizeof(struct __main_block_impl_0)};</p>
+<p>最后则是这一段我们写得main函数的代码，通过调用__main_block_impl_0函数来初始化一个Block对象，最后调用也就是简单地用c语言函数指针的方式调用。<br>    int main() {</p>
+<pre><code>    void <span class="comment">(*blk)(void) = (void (*)</span>())&amp;__main_block_impl_0((void *)__main_block_func_0, &amp;__main_block_desc_0_DATA);
 
-<span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
-  <span class="keyword">size_t</span> reserved;
-  <span class="keyword">size_t</span> Block_size;
-} __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0)};
-
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>{
-
-    <span class="keyword">void</span> (*blk)(<span class="keyword">void</span>) = (<span class="keyword">void</span> (*)())&amp;__main_block_impl_0((<span class="keyword">void</span> *)__main_block_func_0, &amp;__main_block_desc_0_DATA);
-
-    ((<span class="keyword">void</span> (*)(__block_impl *))((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);
-    <span class="keyword">return</span> <span class="number">0</span>;
+    ((void <span class="comment">(*)(__block_impl *)</span>)((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);
+    return <span class="number">0</span>;
 }
-</code></pre><p>Block就是Objc的对象</p>
-<h5 id="如何截获自动变量">如何截获自动变量</h5><pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
+</code></pre><p>从isa的存在我们也大概能够看出来Block其实就是Objc的对象，只不过这是一个为了性能考虑而可能在栈上生成的一个对象。</p>
+<h5 id="如何截获自动变量">如何截获自动变量</h5><p>这一次尝试一下使用Block来截获外部变量，看一下，Block如何能够使用外部变量，原函数：</p>
+<pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
 
     <span class="keyword">int</span> dmy = <span class="number">256</span>;
     <span class="keyword">int</span> <span class="keyword">var</span> = <span class="number">10</span>;
@@ -277,8 +224,14 @@
     blk();
     <span class="keyword">return</span> <span class="number">0</span>;
 }
-
-<span class="keyword">struct</span> __main_block_impl_0 {
+</code></pre><p>重写以后发现，其实没有多大改变，只是多了一些内容：</p>
+<ul>
+<li>__main_block_impl_0中多了一个指针fmt，和int类型的变量，其实也很容易理解，就是用来存放外部变量的。</li>
+<li>__main_block_impl_0初始化的时候会同时对成员变量赋值。</li>
+<li>__main_block_func_0中会在开始的地方帮你声明两个同名的变量，赋值的值则是从传入的self通过指针取值。</li>
+</ul>
+<p>那么其实从这些我们也不难看出，Block其实只截获了内部用到对象，以及为什么Block中普通截获的值不能改变，当然不能改写只是编译器检查，因为改了也没用。</p>
+<pre><code><span class="keyword">struct</span> __main_block_impl_0 {
   <span class="keyword">struct</span> __block_impl impl;
   <span class="keyword">struct</span> __main_block_desc_0* Desc;
   <span class="keyword">const</span> <span class="keyword">char</span> *fmt;
@@ -315,8 +268,7 @@
     ((<span class="keyword">void</span> (*)(__block_impl *))((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);
     <span class="keyword">return</span> <span class="number">0</span>;
 }
-</code></pre><p>不能改写只是编译器检查，因为改了也没用。</p>
-<h3 id="__block作用">__block作用</h3><p>静态，全局静态，全局变量本身就可以访问（静态变量不是通过作用域，通过指针）</p>
+</code></pre><h3 id="__block的作用">__block的作用</h3><p>首先来看下，有哪些变量是就算不在函数内声明，函数中也能使用和改变值的：静态变量，静态全局，全局变量。那这些变量是通过什么方式来实现的呢？<br>对于全部变量来说，其实本身它的作用域就已经包括了函数所在区域，能使用并不奇怪，普通的静态变量其实是通过指针来做到的。<br>那其实也不难推出，__block基本上来说也是通过指针（因为这也是最简单地一种方法）。<br>废话不多说，上代码：</p>
 <pre><code><span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
 
     __block <span class="keyword">int</span> <span class="keyword">var</span> = <span class="number">10</span>;
@@ -325,53 +277,48 @@
     };
     <span class="keyword">return</span> <span class="number">0</span>;
 }
-
-<span class="keyword">struct</span> __Block_byref_var_0 {
+</code></pre><p>经过重写后发现，增加了狂多代码，不过不用慌，都是可读性很强的代码，慢慢分析。</p>
+<p>这一段就是<strong>block说明符修饰过后的变量最终声明的结构体，其中 </strong>forwarding很重要（这个是不同存储区域能访问到同一个变量的关键）</p>
+<pre><code><span class="keyword">struct</span> __Block_byref_var_0 {
   <span class="keyword">void</span> *__isa;
 __Block_byref_var_0 *__forwarding;
  <span class="keyword">int</span> __flags;
  <span class="keyword">int</span> __size;
  <span class="keyword">int</span> <span class="keyword">var</span>;
 };
-
-<span class="keyword">struct</span> __main_block_impl_0 {
-  <span class="keyword">struct</span> __block_impl impl;
-  <span class="keyword">struct</span> __main_block_desc_0* Desc;
-  __Block_byref_var_0 *<span class="keyword">var</span>; <span class="comment">// by ref</span>
-  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, __Block_byref_var_0 *_var, <span class="keyword">int</span> flags=<span class="number">0</span>) : <span class="keyword">var</span>(_var-&gt;__forwarding) {
+</code></pre><p>在这里大概也看出了一点端倪，其实传给var指针的是_var-&gt;<strong>forwarding，后面会给出 </strong>forwarding指向的是谁。</p>
+<pre><code>struct __main_block_impl_0 {
+  struct __block_impl impl;
+  struct __main_block_desc_0* <span class="type">Desc</span>;
+  __Block_byref_var_0 *<span class="keyword">var</span>; // by <span class="keyword">ref</span>
+  __main_block_impl_0(<span class="type">void</span> *fp, struct __main_block_desc_0 *desc, __Block_byref_var_0 *_var, <span class="type">int</span> flags=<span class="number">0</span>) : <span class="keyword">var</span>(_var-&gt;__forwarding) {
     impl.isa = &amp;_NSConcreteStackBlock;
-    impl.Flags = flags;
-    impl.FuncPtr = fp;
-    Desc = desc;
+    impl.<span class="type">Flags</span> = flags;
+    impl.<span class="type">FuncPtr</span> = fp;
+    <span class="type">Desc</span> = desc;
   }
 };
-<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself) {
-  __Block_byref_var_0 *<span class="keyword">var</span> = __cself-&gt;<span class="keyword">var</span>; <span class="comment">// bound by ref</span>
+</code></pre><p>看到这，基本就知道为什么用__block修饰的变量，在Block中也能改变了，因为内部声明时是用了指针嘛。</p>
+<pre><code><span class="keyword">static</span> <span class="type">void</span> __main_block_func_0(struct __main_block_impl_0 *__cself) {
+  __Block_byref_var_0 *<span class="keyword">var</span> = __cself-&gt;<span class="keyword">var</span>; // bound by <span class="keyword">ref</span>
 
         (<span class="keyword">var</span>-&gt;__forwarding-&gt;<span class="keyword">var</span>) = <span class="number">1</span>;
     }
-<span class="keyword">static</span> <span class="keyword">void</span> __main_block_copy_0(<span class="keyword">struct</span> __main_block_impl_0*dst, <span class="keyword">struct</span> __main_block_impl_0*src) {_Block_object_assign((<span class="keyword">void</span>*)&amp;dst-&gt;<span class="keyword">var</span>, (<span class="keyword">void</span>*)src-&gt;<span class="keyword">var</span>, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);}
-
-<span class="keyword">static</span> <span class="keyword">void</span> __main_block_dispose_0(<span class="keyword">struct</span> __main_block_impl_0*src) {_Block_object_dispose((<span class="keyword">void</span>*)src-&gt;<span class="keyword">var</span>, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);}
+</code></pre><p>这里的copy，和dispose先略过，在后续的Objc对象那部分会详解。<br>    static void <strong>main_block_copy_0(struct </strong>main_block_impl_0<em>dst, struct __main_block_impl_0</em>src) {_Block_object_assign((void<em>)&amp;dst-&gt;var, (void</em>)src-&gt;var, 8/<em>BLOCK_FIELD_IS_BYREF</em>/);}</p>
+<pre><code><span class="keyword">static</span> <span class="keyword">void</span> __main_block_dispose_0(<span class="keyword">struct</span> __main_block_impl_0*src) {_Block_object_dispose((<span class="keyword">void</span>*)src-&gt;var, <span class="number">8</span><span class="comment">/*BLOCK_FIELD_IS_BYREF*/</span>);}
 
 <span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
-  size_t reserved;
-  size_t Block_size;
+  <span class="keyword">size_t</span> reserved;
+  <span class="keyword">size_t</span> Block_size;
   <span class="keyword">void</span> (*copy)(<span class="keyword">struct</span> __main_block_impl_0*, <span class="keyword">struct</span> __main_block_impl_0*);
   <span class="keyword">void</span> (*dispose)(<span class="keyword">struct</span> __main_block_impl_0*);
 } __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0), __main_block_copy_0, __main_block_dispose_0};
-<span class="function"><span class="keyword">int</span> <span class="title">main</span>(<span class="params"></span>) </span>{
-
-    __attribute__((__blocks__(byref))) __Block_byref_var_0 <span class="keyword">var</span> = {(<span class="keyword">void</span>*)<span class="number">0</span>,(__Block_byref_var_0 *)&amp;<span class="keyword">var</span>, <span class="number">0</span>, <span class="keyword">sizeof</span>(__Block_byref_var_0), <span class="number">10</span>};
-    <span class="keyword">void</span> (*blk)(<span class="keyword">void</span>) = (<span class="keyword">void</span> (*)())&amp;__main_block_impl_0((<span class="keyword">void</span> *)__main_block_func_0, &amp;__main_block_desc_0_DATA, (__Block_byref_var_0 *)&amp;<span class="keyword">var</span>, <span class="number">570425344</span>);
-    <span class="keyword">return</span> <span class="number">0</span>;
+</code></pre><p>通过这一段，可以看出其实var已经不是简单地Int类型了，变得老长老长了，编译器总是在默默中给我们加了点料。同时也知道了__forwarding指向的是var自身。<br>    int main() {</p>
+<pre><code>    __attribute__<span class="params">(<span class="params">(__blocks__<span class="params">(byref)</span>)</span>)</span> __Block_byref_var_0 var = {<span class="params">(void*)</span><span class="number">0</span>,<span class="params">(__Block_byref_var_0 *)</span>&amp;var, <span class="number">0</span>, sizeof<span class="params">(__Block_byref_var_0)</span>, <span class="number">10</span>};
+    void <span class="params">(*blk)</span><span class="params">(void)</span> = <span class="params">(void <span class="params">(*)</span><span class="params">()</span>)</span>&amp;__main_block_impl_0<span class="params">(<span class="params">(void *)</span>__main_block_func_0, &amp;__main_block_desc_0_DATA, <span class="params">(__Block_byref_var_0 *)</span>&amp;var, <span class="number">570425344</span>)</span>;
+    return <span class="number">0</span>;
 }
-</code></pre><ol>
-<li>Block超出变量作用域可存在？</li>
-<li>__block变量的结构体成员forwarding？</li>
-<li>copy 和 dispose的作用？</li>
-</ol>
-<h3 id="Block,__block存储域">Block,__block存储域</h3><p>Q:Block超出变量作用域可存在？</p>
+</code></pre><h3 id="Block,__block存储域">Block,__block存储域</h3><p>Q:Block超出变量作用域可存在？</p>
 <p>A:</p>
 <ol>
 <li>配置在全局变量中得Block，在变量作用域之外也可以通过指针安全的使用</li>
@@ -379,49 +326,31 @@ __Block_byref_var_0 *__forwarding;
 <li>而<strong>block变量用 </strong>forward可以实现无论配置在哪都可以正确地访问 __block变量</li>
 <li>在ARC下，大多数情况下编译器会恰当的判断，自动将Block从栈上复制到堆上。（autorelease）</li>
 </ol>
-<p>Global:</p>
-<ol>
-<li>在全局变量声明区</li>
-<li>Block声明中没有截获局部变量时</li>
-</ol>
+<p>补充：</p>
 <ul>
-<li>自动copy：</li>
+<li>自动copy：Block作为函数的返回值时</li>
+<li>手动copy：向方法或函数的参数中传递Block（但是可以在函数中适当地copy就不必在传递前copy）（例如GCD，Animation等）</li>
 </ul>
-<p>Block作为函数的返回值时</p>
-<ul>
-<li>手动copy：</li>
-</ul>
-<p>向方法或函数的参数中传递Block（但是可以在函数中适当地copy就不必在传递前copy）（GCD中得）</p>
-<p>调用Copy时不同的Block对象究竟发生了什么：</p>
+<p>Q:调用Copy时不同的Block对象究竟发生了什么：</p>
 <ol>
 <li>_NSConcreteStackBlock            ：从栈复制到堆</li>
 <li>_NSConcreteGlobalBlock            ：什么也不做</li>
 <li>_NSConcreteMallocBlock            ：引用计数增加</li>
 </ol>
-<p>调用Copy时不同的__block对象究竟发生了什么：</p>
+<p>Q:调用Copy时不同的__block对象究竟发生了什么：</p>
 <ol>
 <li>栈            ：从栈复制到堆，并且被Block持有</li>
 <li>堆            ：被Block持有</li>
 </ol>
-<p>Q:__block变量的结构体成员forwarding？</p>
-<p>A:为了能够在不同位置的__block变量或者栈变量都能访问的是同一个变量</p>
-<h3 id="capture-1">capture</h3><p>正常情况下，C语言是不支持__strong修饰符的变量，不能很好地管理内存。但是runtime给了我们机会，</p>
-<p>让我们知道Block什么时候复制到堆上，什么时候会废弃。so，我们就用到了copy和dispose函数。</p>
-<p>只有在Block对象调用过copy后，Block才能持有截获的__strong类型的变量。</p>
-<p>很容易引起循环引用，如何解决：</p>
-<ol>
-<li>__weak修饰符</li>
-<li>__block修饰符（nil）</li>
-<li><strong>unsafe</strong>unretain</li>
-</ol>
-<p>非ARC下 __block不会持有对象。</p>
+<h3 id="新的开始">新的开始</h3><p>这一篇，主要把Block变量和__block变量分析了一下，对于Objc中得对象，Block如何处理放到下一篇详细的讲述，同时下一篇也会详细的讲解一下避免Block循环引用的N种姿势。以及之前没有讲得copy和dispose是干嘛的，顺带着还会说一下mrc下地Block。</p>
+<p>当然本人才疏学浅，上面只是个人的一些理解，可能会有偏差，如果有误，欢迎吐槽纠正。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block/" data-id="ciamhroyi00000432pvm29rl2" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block(上)/" data-id="ciapcx1aw0005kn32ikdlq4ym" class="article-share-link">分享到</a>
       
-        <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block/#disqus_thread" class="article-comment-link">评论</a>
+        <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block(上)/#disqus_thread" class="article-comment-link">评论</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/block/">block</a></li></ul>
@@ -462,17 +391,16 @@ __Block_byref_var_0 *__forwarding;
           <li>
             
             <div class="item-thumbnail">
-              <a href="/2015/06/07/Think-in-Block/" class="thumbnail">
+              <a href="/2015/06/07/Think-in-Block(上)/" class="thumbnail">
   
-    <span style="background-image:url(/images/avatar.jpg
-)" alt="Think in Block" class="thumbnail-image"></span>
+    <span class="thumbnail-image thumbnail-none"></span>
   
 </a>
             </div>
             
             <div class="item-inner">
               <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
-              <p class="item-title"><a href="/2015/06/07/Think-in-Block/" class="title">Think in Block</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block(上)/" class="title">Think in Block(上)</a></p>
               <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
             </div>
           </li>
