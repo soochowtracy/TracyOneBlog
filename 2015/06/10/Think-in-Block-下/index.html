@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Think in Block(下) | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。
+在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。
+截获Objc对象先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Think in Block(下)">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。
+在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。
+截获Objc对象先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后">
+<meta property="og:updated_time" content="2015-06-10T13:33:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Think in Block(下)">
+<meta name="twitter:description" content="这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。
+在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。
+截获Objc对象先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        2
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        1
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-Think-in-Block-下" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Think in Block(下)
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/10/Think-in-Block-下/">
+    <time datetime="2015-06-10T13:28:22.000Z" itemprop="datePublished">2015-06-10</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。</p>
+<p>在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。</p>
+<h3 id="截获Objc对象">截获Objc对象</h3><p>先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后的代码非常多，不过抽离出来后也很简洁。</p>
+<a id="more"></a>
+<pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(^blk_t)(<span class="keyword">id</span> obj);
+<span class="keyword">int</span> main(){
+
+    blk_t blk;
+    {
+        <span class="keyword">id</span> array = [[<span class="built_in">NSMutableArray</span> alloc] init];
+
+        blk = [^(<span class="keyword">id</span> obj){
+            [array addObject:obj];
+
+            <span class="built_in">NSLog</span>(<span class="string">@"array count = %ld"</span>, [array count]);
+        } <span class="keyword">copy</span>];
+    }
+
+    blk([[<span class="built_in">NSObject</span> alloc] init]);
+    blk([[<span class="built_in">NSObject</span> alloc] init]);
+    blk([[<span class="built_in">NSObject</span> alloc] init]);
+}
+</code></pre><p>在这里，我们能够看出来，Block对于Objc对象的截获是通过指针，并且和外部修饰符一致，也就是说外部是strong，内部也是strong，然后c结构体中并不能很好地管理内存，所以其实是通过运行时来掌控的，也就是后面会看到的copy和dispose函数的作用。</p>
+<pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(*blk_t)(<span class="keyword">id</span> obj);
+<span class="keyword">struct</span> __main_block_impl_0 {
+  <span class="keyword">struct</span> __block_impl impl;
+  <span class="keyword">struct</span> __main_block_desc_0* Desc;
+  <span class="keyword">id</span> array;
+  __main_block_impl_0(<span class="keyword">void</span> *fp, <span class="keyword">struct</span> __main_block_desc_0 *desc, <span class="keyword">id</span> _array, <span class="keyword">int</span> flags=<span class="number">0</span>) : array(_array) {
+    impl<span class="variable">.isa</span> = &amp;_<span class="built_in">NSConcreteStackBlock</span>;
+    impl<span class="variable">.Flags</span> = flags;
+    impl<span class="variable">.FuncPtr</span> = fp;
+    Desc = desc;
+  }
+};
+
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_func_0(<span class="keyword">struct</span> __main_block_impl_0 *__cself, <span class="keyword">id</span> obj) {
+      <span class="keyword">id</span> array = __cself-&gt;array; <span class="comment">// bound by copy</span>
+
+      ((<span class="keyword">void</span> (*)(<span class="keyword">id</span>, SEL, <span class="keyword">id</span>))(<span class="keyword">void</span> *)objc_msgSend)((<span class="keyword">id</span>)array, sel_registerName(<span class="string">"addObject:"</span>), (<span class="keyword">id</span>)obj);
+
+      <span class="built_in">NSLog</span>((<span class="built_in">NSString</span> *)&amp;__<span class="built_in">NSConstantStringImpl__var_folders_hv_3dth3by12sg3t1g37hq5plkw0000gn_T_main_18c6fa_mi_0</span>, ((<span class="built_in">NSUInteger</span> (*)(<span class="keyword">id</span>, SEL))(<span class="keyword">void</span> *)objc_msgSend)((<span class="keyword">id</span>)array, sel_registerName(<span class="string">"count"</span>)));
+}
+</code></pre><ol>
+<li>在把Block对象拷贝到堆上的时候copy函数会被调用，而在Block从堆上释放的时候dispose会被调用。</li>
+<li>在调用copy函数的时候_Block_object_assign将外部对象赋值给Block结构体的成员变量，并持有它。</li>
+<li>在调用dispose函数的时候_Block_object_dispose将释放Block结构体的成员变量。</li>
+</ol>
+<p>有了这些隐藏在背后的操作后，通过使用strong类型的局部对象，Block截获后能够在超出其变量作用域而存在。</p>
+<pre><code><span class="keyword">static</span> <span class="keyword">void</span> __main_block_copy_0(<span class="keyword">struct</span> __main_block_impl_0*dst, <span class="keyword">struct</span> __main_block_impl_0*src) {
+    _Block_object_assign((<span class="keyword">void</span>*)&amp;dst-&gt;<span class="built_in">array</span>, (<span class="keyword">void</span>*)src-&gt;<span class="built_in">array</span>, <span class="number">3</span><span class="comment">/*BLOCK_FIELD_IS_OBJECT*/</span>);
+}
+
+<span class="keyword">static</span> <span class="keyword">void</span> __main_block_dispose_0(<span class="keyword">struct</span> __main_block_impl_0*src) {
+    _Block_object_dispose((<span class="keyword">void</span>*)src-&gt;<span class="built_in">array</span>, <span class="number">3</span><span class="comment">/*BLOCK_FIELD_IS_OBJECT*/</span>);
+}
+
+<span class="keyword">static</span> <span class="keyword">struct</span> __main_block_desc_0 {
+  <span class="keyword">size_t</span> reserved;
+  <span class="keyword">size_t</span> Block_size;
+  <span class="keyword">void</span> (*copy)(<span class="keyword">struct</span> __main_block_impl_0*, <span class="keyword">struct</span> __main_block_impl_0*);
+  <span class="keyword">void</span> (*dispose)(<span class="keyword">struct</span> __main_block_impl_0*);
+} __main_block_desc_0_DATA = { <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> __main_block_impl_0), __main_block_copy_0, __main_block_dispose_0};
+</code></pre><p>其实回过头去看一下截获__block变量的时候也生成了两个类似的函数，唯一的区别是BLOCK_FIELD_IS_OBJECT和BLOCK_FIELD_IS_BYREF，这只是用来标示这是一个对象，还是一个变量。</p>
+<pre><code>int main<span class="params">()</span>{
+
+    blk_t blk;
+    {
+        id array = <span class="params">(<span class="params">(NSMutableArray *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSMutableArray *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSMutableArray"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>;
+
+        blk = <span class="params">(blk_t)</span><span class="params">(<span class="params">(id <span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>&amp;__main_block_impl_0<span class="params">(<span class="params">(void *)</span>__main_block_func_0, &amp;__main_block_desc_0_DATA, array, <span class="number">570425344</span>)</span>, sel_registerName<span class="params">(<span class="string">"copy"</span>)</span>)</span>;
+    }
+
+
+    <span class="params">(<span class="params">(void <span class="params">(*)</span><span class="params">(__block_impl *, id)</span>)</span><span class="params">(<span class="params">(__block_impl *)</span>blk)</span>-&gt;FuncPtr)</span><span class="params">(<span class="params">(__block_impl *)</span>blk, <span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSObject"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>)</span>;
+    <span class="params">(<span class="params">(void <span class="params">(*)</span><span class="params">(__block_impl *, id)</span>)</span><span class="params">(<span class="params">(__block_impl *)</span>blk)</span>-&gt;FuncPtr)</span><span class="params">(<span class="params">(__block_impl *)</span>blk, <span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSObject"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>)</span>;
+    <span class="params">(<span class="params">(void <span class="params">(*)</span><span class="params">(__block_impl *, id)</span>)</span><span class="params">(<span class="params">(__block_impl *)</span>blk)</span>-&gt;FuncPtr)</span><span class="params">(<span class="params">(__block_impl *)</span>blk, <span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSObject"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>)</span>;
+
+}
+</code></pre><p>tips：上面这些代码其实和书上的有一定的区别，也即是前面说得，我们的技术在提升，当然苹果没有理由不提升，不管是编译器还是底层实现。其实这里加不加copy都一样，应该是最近ARC的机制有了一点改变，这个后面会出一篇Blog详解。</p>
+<h3 id="循环引用">循环引用</h3><p>由于上边所示那样的内存管理机制，当我们截获strong类型的对象时，很容易出现循环引用，但是也不用担心，没必要无时不刻的用一个__weak来避免，盲目地使用只会暴露出并没有深入地理解。</p>
+<p>这里给出三种方法来避免循环引用：</p>
+<ol>
+<li>__weak 修饰符</li>
+</ol>
+<p>通过weak肯定能解除循环引用，但也有缺点，有时候我们会在内部使用strong来保证执行block的时候外部变量不会释放，但这也不能避免在block执行前已经释放了这种情形。</p>
+<pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(^blk_t)();
+<span class="class"><span class="keyword">@interface</span> <span class="title">Block</span> ()</span>
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *array;
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>)blk_t blk;
+<span class="keyword">@end</span>
+
+<span class="class"><span class="keyword">@implementation</span> <span class="title">Block</span></span>
+- (instancetype)init{
+    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) {
+        __<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;
+        <span class="keyword">self</span><span class="variable">.blk</span> = ^{
+            <span class="built_in">NSLog</span>(<span class="string">@"test%@"</span>, weakSelf<span class="variable">.array</span>);
+        };
+    }
+    <span class="keyword">return</span> <span class="keyword">self</span>;
+}
+<span class="keyword">@end</span>
+</code></pre><ol>
+<li>__block修饰符+nil操作</li>
+</ol>
+<p>这种情况则也能避免循环引用，但是有个前提，这个Block必须在某个地方执行，否则还是不能打破循环引用环，但是这么做的好处还是很多的，首先可以延长生命周期，其次在执行Block的时候可以决定是否是将nil赋予，还是给另一个值。</p>
+<pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(^blk_t)();
+<span class="class"><span class="keyword">@interface</span> <span class="title">Block</span> ()</span>
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *array;
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>)blk_t blk;
+<span class="keyword">@end</span>
+
+<span class="class"><span class="keyword">@implementation</span> <span class="title">Block</span></span>
+- (instancetype)init{
+    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) {
+
+        __block <span class="keyword">typeof</span>(<span class="keyword">self</span>) weakSelf = <span class="keyword">self</span>;
+
+        <span class="keyword">self</span><span class="variable">.blk</span> = ^{
+            <span class="built_in">NSLog</span>(<span class="string">@"test%@"</span>, weakSelf<span class="variable">.array</span>);
+            weakSelf = <span class="literal">nil</span>;
+        };
+    }
+    <span class="keyword">return</span> <span class="keyword">self</span>;
+}
+<span class="keyword">@end</span>
+</code></pre><ol>
+<li><strong>unsafe</strong>unretain修饰符</li>
+</ol>
+<p>这其实只是用在一些weak不支持的场合，现在几乎不怎么用了。</p>
+<p>三者各有优缺点，<strong>weak不能够延长生命周期，</strong>block修饰符，如果最后没有执行，导致赋值nil不能够执行则还是会循环引用，<strong>unsafe</strong>unretain和weak相似，但是有可能会出现野指针的情况。</p>
+<h3 id="MRC下地Block">MRC下地Block</h3><ul>
+<li>在mrc下需要手动的调用copy和release，只要是copy到堆上了，则可以使用retain来持有，否则retain并没有效果。</li>
+<li>在C语言中也支持，使用的是Block_copy和Block_release函数。</li>
+<li>在ARC无效的时候我们只需要使用<strong>block就能避免循环引用了，这是因为，在mrc下</strong>block对象不会被retain。</li>
+</ul>
+<h3 id="结束语">结束语</h3><p>关于Block的探究也差不多了，接下来就是实战中去体会了，不过在探究的过程中发现，是时候去深入地理解一下Objc的内存管理机制，同时也发现在这本书中的ARC讲解已经有点过时了，有些和真实地情况有出入。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="ciaqsrks00004cz322vum7uhd" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/#disqus_thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/block/">block</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/07/Think-in-Block-上/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Think in Block(上)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/10/Think-in-Block-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/10/Think-in-Block-下/" class="title">Think in Block(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-10T13:28:22.000Z" itemprop="datePublished">2015-06-10</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/Think-in-Block-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block-上/" class="title">Think in Block(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/block/" style="font-size: 10px;">block</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script>
+  var disqus_shortname = 'tracyone';
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
