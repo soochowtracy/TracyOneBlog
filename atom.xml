@@ -304,7 +304,7 @@ objc_object::rootDealloc<span class="params">()</span>
     <link href="http://blog.tracyone.com/2015/06/10/Think-in-Block-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/10/Think-in-Block-下/</id>
     <published>2015-06-10T13:28:22.000Z</published>
-    <updated>2015-06-10T13:33:29.000Z</updated>
+    <updated>2015-06-10T13:33:23.000Z</updated>
     <content type="html"><![CDATA[<p>这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。</p>
 <p>在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。</p>
 <h3 id="截获Objc对象">截获Objc对象</h3><p>先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后的代码非常多，不过抽离出来后也很简洁。</p>
