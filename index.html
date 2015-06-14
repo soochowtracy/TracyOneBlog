@@ -87,11 +87,11 @@
   	</div>
     <div class="article-info profile-block">
       <div class="article-info-block">
-        2
+        3
         <span>文章</span>
       </div>
       <div class="article-info-block">
-        1
+        2
         <span>标签</span>
       </div>
     </div>
@@ -113,6 +113,68 @@
   </div>
 </aside>
       <section id="main">
+      <article id="post-深入浅出ARC-上" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/14/深入浅出ARC-上/">深入浅出ARC(上)</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/14/深入浅出ARC-上/">
+    <time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+<h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
+<ol>
+<li>自己生成的对象，自己持有。</li>
+<li>非自己生成的对象，自己也能持有。</li>
+<li>不再需要持有的对象，自己可以释放。</li>
+<li>非自己持有的对象不能释放。</li>
+</ol>
+<p>其实这些就是对应了Objc中得alloc，retain等方法，这些是引用计数的思考方式，并不因是否ARC改变，那么接下来看一下一些底层实现。</p>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/14/深入浅出ARC-上/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="ciawm4ftb00083q32pqowuwl0" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/#disqus_thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARC/">ARC</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+    
       <article id="post-Think-in-Block-下" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -155,7 +217,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="ciaqsrks00004cz322vum7uhd" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="ciaqskx9100003q3242bg16tm" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/#disqus_thread" class="article-comment-link">评论</a>
       
@@ -212,7 +274,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="ciaqsrks90009cz327c0gduq3" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="ciaqslunh00013q32onx477ga" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/#disqus_thread" class="article-comment-link">评论</a>
       
@@ -234,6 +296,23 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/14/深入浅出ARC-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/14/深入浅出ARC-上/" class="title">深入浅出ARC(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time></p>
+            </div>
+          </li>
         
           <li>
             
@@ -278,7 +357,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -287,7 +366,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -296,7 +375,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/block/" style="font-size: 10px;">block</a>
+      <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/block/" style="font-size: 20px;">block</a>
     </div>
   </div>
 
@@ -305,7 +384,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 

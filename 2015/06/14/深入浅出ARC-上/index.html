@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入浅出ARC(上) | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
+
+自己生成的对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出ARC(上)">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
+
+自己生成的对">
+<meta property="og:updated_time" content="2015-06-14T15:22:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出ARC(上)">
+<meta name="twitter:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
+
+自己生成的对">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        3
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        2
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-深入浅出ARC-上" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入浅出ARC(上)
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/14/深入浅出ARC-上/">
+    <time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+<h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
+<ol>
+<li>自己生成的对象，自己持有。</li>
+<li>非自己生成的对象，自己也能持有。</li>
+<li>不再需要持有的对象，自己可以释放。</li>
+<li>非自己持有的对象不能释放。</li>
+</ol>
+<p>其实这些就是对应了Objc中得alloc，retain等方法，这些是引用计数的思考方式，并不因是否ARC改变，那么接下来看一下一些底层实现。</p>
+<a id="more"></a>
+<h3 id="alloc">alloc</h3><p>通过苹果官网开源的Objc库，我们可以发现总共调用了如下几个方法，虽然很长，然而有一些我们是可以忽略的，逐步分析。</p>
+<p>1.这个方法很简单就是调用了_objc_rootAlloc函数。</p>
+<pre><code>+ (<span class="keyword">id</span>)alloc {
+    <span class="keyword">return</span> _objc_rootAlloc(<span class="keyword">self</span>);
+}
+</code></pre><p>2.调用了callAlloc函数，这个函数有三个参数，其中第一个参数不能为空，这是一个最基础的alloc方法的实现。</p>
+<pre><code>id
+_objc_rootAlloc(<span class="class"><span class="keyword">Class</span> <span class="title">cls</span>)
+</span>{
+    <span class="keyword">return</span> callAlloc(cls, <span class="keyword">false</span><span class="comment">/*checkNil*/</span>, <span class="keyword">true</span><span class="comment">/*allocWithZone*/</span>);
+}
+</code></pre><p>3.这里调用的代码就变多了，其实大部分都不需要看，关键就在class_createInstance上，这也是真实地创建实例的方法。其他代码主要是</p>
+<pre><code><span class="keyword">static</span> ALWAYS_INLINE <span class="keyword">id</span>
+callAlloc(Class cls, <span class="keyword">bool</span> checkNil, <span class="keyword">bool</span> allocWithZone=<span class="literal">false</span>)
+{
+    <span class="keyword">if</span> (checkNil &amp;&amp; !cls) <span class="keyword">return</span> <span class="literal">nil</span>;
+\<span class="preprocessor">#if __OBJC2__</span>
+    <span class="keyword">if</span> (! cls-&gt;ISA()-&gt;hasCustomAWZ()) {
+        <span class="comment">// No alloc/allocWithZone implementation. Go straight to the allocator.</span>
+        <span class="comment">// <span class="doctag"><span class="keyword">fixme</span></span> store hasCustomAWZ in the non-meta class and </span>
+        <span class="comment">// add it to canAllocFast's summary</span>
+        <span class="keyword">if</span> (cls-&gt;canAllocFast()) {
+            <span class="comment">// No ctors, raw isa, etc. Go straight to the metal.</span>
+            <span class="keyword">bool</span> dtor = cls-&gt;hasCxxDtor();
+            <span class="keyword">id</span> obj = (<span class="keyword">id</span>)calloc(<span class="number">1</span>, cls-&gt;bits<span class="variable">.fastInstanceSize</span>());
+            <span class="keyword">if</span> (!obj) <span class="keyword">return</span> callBadAllocHandler(cls);
+            obj-&gt;initInstanceIsa(cls, dtor);
+            <span class="keyword">return</span> obj;
+        }
+        <span class="keyword">else</span> {
+            <span class="comment">// Has ctor or raw isa or something. Use the slower path.</span>
+            <span class="keyword">id</span> obj = class_createInstance(cls, <span class="number">0</span>);
+            <span class="keyword">if</span> (!obj) <span class="keyword">return</span> callBadAllocHandler(cls);
+            <span class="keyword">return</span> obj;
+        }
+    }
+<span class="preprocessor">#endif</span>
+
+    <span class="comment">// No shortcuts available.</span>
+    <span class="keyword">if</span> (allocWithZone) <span class="keyword">return</span> [cls allocWithZone:<span class="literal">nil</span>];
+    <span class="keyword">return</span> [cls alloc];
+}
+</code></pre><p>4.这个函数则是调用了一个私有函数_class_createInstanceFromZone，从这里也能看出Objc其实已经不用zone了。</p>
+<pre><code>id 
+<span class="keyword">class</span><span class="number">_</span>createInstance(Class cls, size<span class="number">_</span>t extraBytes)
+{
+    <span class="keyword">return</span> <span class="number">_</span><span class="keyword">class</span><span class="number">_</span>createInstanceFromZone(cls, extraBytes, nil);
+}
+</code></pre><p>5.最终调用的其实是这一行代码obj = (id)calloc(1, size);到这里一个对象的初始化基本告一段落了，这中间跳过了很多，不过这次主要是探究一下和内存管理相关的，也无伤大雅。最后是用calloc分配了一个初始化为0的对象。</p>
+<pre><code>static __attribute__<span class="params">(<span class="params">(always_inline)</span>)</span> 
+id
+_class_createInstanceFromZone<span class="params">(Class cls, size_t extraBytes, void *zone)</span>
+{
+    <span class="keyword">if</span> <span class="params">(!cls)</span> return nil;
+
+    assert<span class="params">(cls-&gt;isRealized<span class="params">()</span>)</span>;
+
+    <span class="comment">// Read class's info bits all at once for performance</span>
+    bool hasCxxCtor = cls-&gt;hasCxxCtor<span class="params">()</span>;
+    bool hasCxxDtor = cls-&gt;hasCxxDtor<span class="params">()</span>;
+    bool fast = cls-&gt;canAllocIndexed<span class="params">()</span>;
+
+    size_t size = cls-&gt;instanceSize<span class="params">(extraBytes)</span>;
+
+    id obj;
+    <span class="keyword">if</span> <span class="params">(!UseGC  &amp;&amp;  !zone  &amp;&amp;  fast)</span> {
+        obj = <span class="params">(id)</span>calloc<span class="params">(<span class="number">1</span>, size)</span>;
+        <span class="keyword">if</span> <span class="params">(!obj)</span> return nil;
+        obj-&gt;initInstanceIsa<span class="params">(cls, hasCxxDtor)</span>;
+    } 
+    <span class="keyword">else</span> {
+<span class="built_in">#</span><span class="keyword">if</span> SUPPORT_GC
+        <span class="keyword">if</span> <span class="params">(UseGC)</span> {
+            obj = <span class="params">(id)</span>auto_zone_allocate_object<span class="params">(gc_zone, size,
+                                                AUTO_OBJECT_SCANNED, <span class="number">0</span>, <span class="number">1</span>)</span>;
+        } <span class="keyword">else</span> 
+<span class="built_in">#</span>endif
+        <span class="keyword">if</span> <span class="params">(zone)</span> {
+            obj = <span class="params">(id)</span>malloc_zone_calloc <span class="params">(<span class="params">(malloc_zone_t *)</span>zone, <span class="number">1</span>, size)</span>;
+    } <span class="keyword">else</span> {
+            obj = <span class="params">(id)</span>calloc<span class="params">(<span class="number">1</span>, size)</span>;
+        }
+        <span class="keyword">if</span> <span class="params">(!obj)</span> return nil;
+
+        <span class="comment">// Use non-indexed isa on the assumption that they might be </span>
+        <span class="comment">// doing something weird with the zone or RR.</span>
+        obj-&gt;initIsa<span class="params">(cls)</span>;
+    }
+
+    <span class="keyword">if</span> <span class="params">(hasCxxCtor)</span> {
+        obj = _objc_constructOrFree<span class="params">(obj, cls)</span>;
+    }
+
+    return obj;
+}
+</code></pre><h3 id="retianCount">retianCount</h3><p>前面可能大家会很奇怪，为什么没有看到初始化为1的retainCount呢？其实这和Objc的retainCount实现原理有关，下面上源码：</p>
+<p>1.这个方法很简单就是调用了rootRetainCount这个函数</p>
+<pre><code>- (NSUInteger)retainCount {
+    <span class="keyword">return</span> <span class="function"><span class="params">((id)self)</span>-&gt;</span>rootRetainCount();
+}
+</code></pre><p>2.这里有一个是否isTaggedPointer的判断，相关内容可以查看唐巧的<a href="http://www.devtang.com/blog/2014/05/30/understand-tagged-pointer/" target="_blank" rel="external">这篇博客</a>。这个可以跳过，主要就是调用了sidetable_retainCount这个函数。</p>
+<pre><code><span class="keyword">inline</span> <span class="keyword">uintptr_t</span> 
+objc_object::rootRetainCount()
+{
+    assert(!UseGC);
+    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> (<span class="keyword">uintptr_t</span>)<span class="keyword">this</span>;
+    <span class="keyword">return</span> sidetable_retainCount();
+}
+</code></pre><p>3.从名字上看这应该是一个和sidetable相关的函数，果然，里面使用了SideTable，从这里，我们大致可以看出Objc使用了类似散列表的结构来记录引用计数。并且在初始化的时候设为了一。不过在这里有一个很奇怪的点，为什么最后返回的refcnt_result是1加上it-&gt;second &gt;&gt; SIDE_TABLE_RC_SHIFT。这个也是苹果机智的地方，等下会介绍。</p>
+<pre><code>uintptr_t
+objc_object::sidetable_retainCount()
+{
+    <span class="type">SideTable</span> *table = <span class="type">SideTable</span>::tableForPointer(this);
+
+    size_t refcnt_result = <span class="number">1</span>;
+
+    spinlock_lock(&amp;table-&gt;slock);
+    <span class="type">RefcountMap</span>::<span class="keyword">iterator</span> it = table-&gt;refcnts.find(this);
+    <span class="keyword">if</span> (it != table-&gt;refcnts.<span class="keyword">end</span>()) {
+        // this <span class="keyword">is</span> valid <span class="keyword">for</span> <span class="type">SIDE_TABLE_RC_PINNED</span> too
+        refcnt_result += it-&gt;second &gt;&gt; <span class="type">SIDE_TABLE_RC_SHIFT</span>;
+    }
+    spinlock_unlock(&amp;table-&gt;slock);
+    <span class="keyword">return</span> refcnt_result;
+}
+</code></pre><h3 id="retain">retain</h3><p>这个就比较简单了，总结下来其实就是找到散列表中得retainCount然后加1向左偏移SIDE_TABLE_RC_SHIFT的值，这里可能大家就知道为什么上面要有一个偏移值了。</p>
+<p>1.还是简单地调用了Objc中得rootRetain函数</p>
+<pre><code>- (id)retain {
+    <span class="keyword">return</span> <span class="function"><span class="params">((id)self)</span>-&gt;</span>rootRetain();
+}
+</code></pre><p>2.同样是判断是否isTaggedPointer，然后调用sidetable_retain。</p>
+<pre><code>inline id 
+objc_object::rootRetain()
+{
+    <span class="keyword">assert</span>(!UseGC);
+    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> (id)<span class="keyword">this</span>;
+    <span class="function"><span class="keyword">return</span> <span class="title">sidetable_retain</span><span class="params">()</span></span>;
+}
+</code></pre><p>3.同样地取到SideTable，refcntStorage += SIDE_TABLE_RC_ONE，同样地加了一个偏移量。然后也能看出散列表的key是对象的指针。</p>
+<pre><code>id
+objc_object::sidetable_retain()
+{
+<span class="preprocessor">#<span class="keyword">if</span> SUPPORT_NONPOINTER_ISA</span>
+    assert(!isa.indexed);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+    SideTable *table = SideTable::tableForPointer(<span class="keyword">this</span>);
+
+    <span class="keyword">if</span> (<span class="keyword">spinlock_t</span>rylock(&amp;table-&gt;slock)) {
+        <span class="keyword">size_t</span>&amp; refcntStorage = table-&gt;refcnts[<span class="keyword">this</span>];
+        <span class="keyword">if</span> (! (refcntStorage &amp; SIDE_TABLE_RC_PINNED)) {
+            refcntStorage += SIDE_TABLE_RC_ONE;
+        }
+        spinlock_unlock(&amp;table-&gt;slock);
+        <span class="keyword">return</span> (id)<span class="keyword">this</span>;
+    }
+    <span class="keyword">return</span> sidetable_retain_slow(table);
+}
+</code></pre><h3 id="release">release</h3><p>这里会解释SIDE_TABLE_RC_SHIFT这个偏移量存在的原因。前面两步和retain一样，不介绍了。</p>
+<pre><code>- <span class="params">(oneway void)</span>release {
+    <span class="params">(<span class="params">(id)</span>self)</span>-&gt;rootRelease<span class="params">()</span>;
+}
+
+inline bool 
+objc_object::rootRelease<span class="params">()</span>
+{
+    assert<span class="params">(!UseGC)</span>;
+
+    <span class="keyword">if</span> <span class="params">(isTaggedPointer<span class="params">()</span>)</span> return <span class="literal">false</span>;
+    return sidetable_release<span class="params">(<span class="literal">true</span>)</span>;
+}
+</code></pre><p>3.主要看一下这里，其实加上SIDE_TABLE_RC_ONE这个便宜是为了空出SIDE_TABLE_DEALLOCATING这个标示，上定义大家就能懂了</p>
+<p>// The order of these bits is important.</p>
+<ul>
+<li>#define SIDE_TABLE_WEAKLY_REFERENCED (1UL&lt;&lt;0)</li>
+<li>#define SIDE_TABLE_DEALLOCATING      (1UL&lt;&lt;1)  // MSB-ward of weak bit</li>
+<li>#define SIDE_TABLE_RC_ONE            (1UL&lt;&lt;2)  // MSB-ward of deallocating bit</li>
+<li>#define SIDE_TABLE_RC_SHIFT 2</li>
+</ul>
+<p>4.SIDE_TABLE_WEAKLY_REFERENCED是代表了弱引用，SIDE_TABLE_DEALLOCATING代表了需要释放的引用，SIDE_TABLE_RC_ONE这个则是正常的的偏移。值是和SIDE_TABLE_RC_SHIFT偏移一样的。<br>release比retain稍微复杂的地方就是他需要判断最终是否需要调用dealloc，所以多了很多判断和赋值，大概步骤就是1.先遍历变量是否存在，如果不存在就调用dealloc，2.如果存在再判断是否小于SIDE_TABLE_DEALLOCATING，如果成立同1，3.否则就减去一个SIDE_TABLE_RC_ONE4.最后看do_dealloc是否需要调用dealloc。</p>
+<pre><code>bool 
+objc_object::sidetable_release<span class="params">(bool performDealloc)</span>
+{
+\<span class="built_in">#</span><span class="keyword">if</span> SUPPORT_NONPOINTER_ISA
+    assert<span class="params">(!isa.indexed)</span>;
+\<span class="built_in">#</span>endif
+    SideTable <span class="built_in">*</span>table = SideTable::tableForPointer<span class="params">(this)</span>;
+
+    bool do_dealloc = <span class="literal">false</span>;
+
+    <span class="keyword">if</span> <span class="params">(spinlock_trylock<span class="params">(&amp;table-&gt;slock)</span>)</span> {
+        RefcountMap::iterator it = table-&gt;refcnts.find<span class="params">(this)</span>;
+        <span class="keyword">if</span> <span class="params">(it == table-&gt;refcnts.end<span class="params">()</span>)</span> {
+            do_dealloc = <span class="literal">true</span>;
+            table-&gt;refcnts[this] = SIDE_TABLE_DEALLOCATING;
+        } <span class="keyword">else</span> <span class="keyword">if</span> <span class="params">(it-&gt;second &lt; SIDE_TABLE_DEALLOCATING)</span> {
+            <span class="comment">// SIDE_TABLE_WEAKLY_REFERENCED may be set. Don't change it.</span>
+            do_dealloc = <span class="literal">true</span>;
+            it-&gt;second |= SIDE_TABLE_DEALLOCATING;
+        } <span class="keyword">else</span> <span class="keyword">if</span> <span class="params">(! <span class="params">(it-&gt;second &amp; SIDE_TABLE_RC_<span class="literal">PI</span>NNED)</span>)</span> {
+            it-&gt;second -= SIDE_TABLE_RC_ONE;
+        }
+        spinlock_unlock<span class="params">(&amp;table-&gt;slock)</span>;
+        <span class="keyword">if</span> <span class="params">(do_dealloc  &amp;&amp;  performDealloc)</span> {
+            <span class="params">(<span class="params">(void<span class="params">(*)</span><span class="params">(objc_object *, SEL)</span>)</span>objc_msgSend)</span><span class="params">(this, SEL_dealloc)</span>;
+        }
+        return do_dealloc;
+    }
+
+    return sidetable_release_slow<span class="params">(table, performDealloc)</span>;
+}
+</code></pre><h3 id="dealloc">dealloc</h3><p>这里其实有很多细节的，比如说在dealloc的时候会做哪些操作等，这个放到下一次讲，这里主要看的是dealloc实现原理，前面3步很简单，略过。</p>
+<pre><code>- <span class="params">(void)</span>dealloc {
+    _objc_rootDealloc<span class="params">(self)</span>;
+}
+
+void
+_objc_rootDealloc<span class="params">(id obj)</span>
+{
+    assert<span class="params">(obj)</span>;
+
+    obj-&gt;rootDealloc<span class="params">()</span>;
+}
+
+inline void
+objc_object::rootDealloc<span class="params">()</span>
+{
+    <span class="keyword">if</span> <span class="params">(isTaggedPointer<span class="params">()</span>)</span> return;
+    object_dispose<span class="params">(<span class="params">(id)</span>this)</span>;
+}
+</code></pre><p>4.这里能够清晰地看到在dealloc之前其实会调用一下objc_destructInstance，这里面做了很多操作，清理关联对象，weak引用等，最后free掉。</p>
+<pre><code><span class="function">id 
+<span class="title">object_dispose</span><span class="params">(id obj)</span>
+</span>{
+    <span class="keyword">if</span> (!obj) <span class="keyword">return</span> nil;
+    objc_destructInstance(obj);
+
+\<span class="preprocessor">#<span class="keyword">if</span> SUPPORT_GC</span>
+    <span class="keyword">if</span> (UseGC) {
+        auto_zone_retain(gc_zone, obj); <span class="comment">// gc free expects rc==1</span>
+    }
+\<span class="preprocessor">#<span class="keyword">endif</span></span>
+
+    <span class="built_in">free</span>(obj);
+
+    <span class="keyword">return</span> nil;
+}
+</code></pre><h3 id="ARC的引子">ARC的引子</h3><p>（这里，为ARC开个头，具体内容请看下回分析。）</p>
+<p>顾名思义，ARC就是交给编译器来管理引用计数，而大家都知道Objc是通过引用计数来管理内存的，也就是说现在的内存管理已经不需要程序员来操心了（大多数情况下）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="ciawm4ftb00083q32pqowuwl0" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/#disqus_thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARC/">ARC</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/10/Think-in-Block-下/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Think in Block(下)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/14/深入浅出ARC-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/14/深入浅出ARC-上/" class="title">深入浅出ARC(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/10/Think-in-Block-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/10/Think-in-Block-下/" class="title">Think in Block(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-10T13:28:22.000Z" itemprop="datePublished">2015-06-10</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/Think-in-Block-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block-上/" class="title">Think in Block(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/block/" style="font-size: 20px;">block</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script>
+  var disqus_shortname = 'tracyone';
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
