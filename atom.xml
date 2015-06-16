@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-06-16T01:49:57.000Z</updated>
+  <updated>2015-06-16T14:27:08.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,197 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[深入浅出ARC(下)]]></title>
+    <link href="http://blog.tracyone.com/2015/06/16/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8B/"/>
+    <id>http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/</id>
+    <published>2015-06-16T14:24:52.000Z</published>
+    <updated>2015-06-16T14:27:08.000Z</updated>
+    <content type="html"><![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
+<h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
+<pre><code>void
+objc_storeStrong<span class="list">(<span class="keyword">id</span> <span class="variable">*location, id obj)
+{
+    id prev = *</span>location<span class="comment">;</span>
+    if <span class="list">(<span class="keyword">obj</span> == prev)</span> {
+        return<span class="comment">;</span>
+    }
+    objc_retain<span class="list">(<span class="keyword">obj</span>)</span><span class="comment">;</span>
+    <span class="variable">*location = obj;
+    objc_release(prev);
+}</span></span>
+</code></pre><h3 id="__strong中的autorelease">__strong中的autorelease</h3><p>对于一个非持有对象赋值给strong类型的变量时，编译器会插入两个比较有意思的函数,这两个函数可以极大减少开销，减轻autoreleasePool的负担。</p>
+<p>1.两个函数都会做一个校验，看是否能够不加入autoreleasePool，直接返回对象。</p>
+<pre><code><span class="property">id</span> 
+objc_autoreleaseReturnValue(<span class="property">id</span> obj)
+{
+    <span class="keyword">if</span> (fastAutoreleaseForReturn(obj)) <span class="constant">return</span> obj;
+<span class="command">
+    return</span> objc_autorelease(obj);
+}
+
+<span class="property">id</span>
+objc_retainAutoreleasedReturnValue(<span class="property">id</span> obj)
+{
+    <span class="keyword">if</span> (fastRetainFromReturn(obj)) <span class="constant">return</span> obj;
+<span class="command">
+    return</span> objc_retain(obj);
+}
+</code></pre><p>2.这两个函数则是揭秘了如何做到不加入autereleasePool而延长生命周期的，具体并没有看太懂，貌似是和线程有关，通过线程的内存中转一下。看了一下，不同的cpu架构实现方式都不同。</p>
+<pre><code><span class="keyword">static</span> ALWAYS_INLINE 
+<span class="keyword">bool</span> fastAutoreleaseForReturn(<span class="keyword">id</span> obj)
+{
+    assert(tls_get_direct(AUTORELEASE_POOL_RECLAIM_KEY) == <span class="literal">nil</span>);
+
+    <span class="keyword">if</span> (callerAcceptsFastAutorelease(__builtin_return_address(<span class="number">0</span>))) {
+        tls_set_direct(AUTORELEASE_POOL_RECLAIM_KEY, obj);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+
+    <span class="keyword">return</span> <span class="literal">false</span>;
+}
+
+
+<span class="keyword">static</span> ALWAYS_INLINE
+<span class="keyword">bool</span> fastRetainFromReturn(<span class="keyword">id</span> obj)
+{
+    <span class="keyword">if</span> (obj == tls_get_direct(AUTORELEASE_POOL_RECLAIM_KEY)) {
+        tls_set_direct(AUTORELEASE_POOL_RECLAIM_KEY, <span class="number">0</span>);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+
+    <span class="keyword">return</span> <span class="literal">false</span>;
+}
+</code></pre><h3 id="__weak">__weak</h3><p>赋值给weak类型变量的对象主要会经过这几步</p>
+<p>1.编译器增加objc_initWeak函数调用，然后会调用objc_storeWeak函数。</p>
+<pre><code>id
+objc_initWeak(id *addr, id <span class="function"><span class="keyword">val</span>)
+</span>{
+    *addr = <span class="number">0</span>;
+    <span class="keyword">if</span> (!<span class="function"><span class="keyword">val</span>) <span class="title">return</span> <span class="title">nil</span>;</span>
+    <span class="keyword">return</span> objc_storeWeak(addr, <span class="function"><span class="keyword">val</span>);</span>
+}
+</code></pre><p>2.这个函数看上去做了很多事，其实很多都可以略过不看，主要做了通过weak_unregister_no_lock函数把原来的对象unregister，通过weak_register_no_lock函数把新的对象register进去。最后一步就是通过setWeaklyReferenced_nolock函数使得引用计数那张散列表的weak引用对象的引用计数中标示为weak引用。</p>
+<pre><code><span class="function">id
+<span class="title">objc_storeWeak</span><span class="params">(id *location, id newObj)</span>
+</span>{
+    id oldObj;
+    SideTable *oldTable;
+    SideTable *newTable;
+    <span class="keyword">spinlock_t</span> *lock1;
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    <span class="keyword">spinlock_t</span> *lock2;
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+
+    <span class="comment">// Acquire locks for old and new values.</span>
+    <span class="comment">// Order by lock address to prevent lock ordering problems. </span>
+    <span class="comment">// Retry if the old value changes underneath us.</span>
+ retry:
+    oldObj = *location;
+
+    oldTable = SideTable::tableForPointer(oldObj);
+    newTable = SideTable::tableForPointer(newObj);
+
+    lock1 = &amp;newTable-&gt;slock;
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    lock2 = &amp;oldTable-&gt;slock;
+    <span class="keyword">if</span> (lock1 &gt; lock2) {
+        <span class="keyword">spinlock_t</span> *temp = lock1;
+        lock1 = lock2;
+        lock2 = temp;
+    }
+    <span class="keyword">if</span> (lock1 != lock2) spinlock_lock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+    spinlock_lock(lock1);
+
+    <span class="keyword">if</span> (*location != oldObj) {
+        spinlock_unlock(lock1);
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+        <span class="keyword">if</span> (lock1 != lock2) spinlock_unlock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+        <span class="keyword">goto</span> retry;
+    }
+
+    weak_unregister_no_lock(&amp;oldTable-&gt;<span class="keyword">weak_t</span>able, oldObj, location);
+    newObj = weak_register_no_lock(&amp;newTable-&gt;<span class="keyword">weak_t</span>able, newObj, location);
+    <span class="comment">// weak_register_no_lock returns nil if weak store should be rejected</span>
+
+    <span class="comment">// Set is-weakly-referenced bit in refcount table.</span>
+    <span class="keyword">if</span> (newObj  &amp;&amp;  !newObj-&gt;isTaggedPointer()) {
+        newObj-&gt;setWeaklyReferenced_nolock();
+    }
+
+    <span class="comment">// Do not set *location anywhere else. That would introduce a race.</span>
+    *location = newObj;
+
+    spinlock_unlock(lock1);
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    <span class="keyword">if</span> (lock1 != lock2) spinlock_unlock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+
+    <span class="keyword">return</span> newObj;
+}
+</code></pre><h3 id="__weak（没有证实的功能）">__weak（没有证实的功能）</h3><p>这里是书上看到的，同时也是在源码中能找到的，但是我却没有证实的一个知识点，就是使用了附有__weak修饰符的变量，会自动注册到autoreleasePool中。</p>
+<p>1.不管是从注释还是代码，都证实了在使用weak变量时为了保证对象没有释放，会添加到autoreleasePool中</p>
+<pre><code>/** 
+ * This loads <span class="keyword">the</span> object referenced <span class="keyword">by</span> a weak pointer <span class="keyword">and</span> returns <span class="keyword">it</span>, <span class="keyword">after</span>
+ * retaining <span class="keyword">and</span> autoreleasing <span class="keyword">the</span> object <span class="keyword">to</span> ensure <span class="keyword">that</span> <span class="keyword">it</span> stays alive
+ * long enough <span class="keyword">for</span> <span class="keyword">the</span> caller <span class="keyword">to</span> use <span class="keyword">it</span>. This function would be used
+ * anywhere a __weak variable <span class="keyword">is</span> used <span class="keyword">in</span> an expression.
+ * 
+ * @param location The weak pointer address
+ * 
+ * @<span class="constant">return</span> The object pointed <span class="keyword">to</span> <span class="keyword">by</span> \e location, <span class="keyword">or</span> \c nil <span class="keyword">if</span> \e location <span class="keyword">is</span> \c nil.
+ */
+<span class="property">id</span>
+objc_loadWeak(<span class="property">id</span> *location)
+{
+    <span class="keyword">if</span> (!*location) <span class="constant">return</span> nil;
+<span class="command">    return</span> objc_autorelease(objc_loadWeakRetained(location));
+}
+</code></pre><p>2.这里weak_read_no_lock函数会retain这个对象，然后通过外部autorelease。</p>
+<pre><code>id
+objc_loadWeakRetained(id *location)
+{
+    id <span class="literal">result</span>;
+
+    <span class="type">SideTable</span> *table;
+    spinlock_t *lock;
+
+ retry:
+    <span class="literal">result</span> = *location;
+    <span class="keyword">if</span> (!<span class="literal">result</span>) <span class="keyword">return</span> <span class="keyword">nil</span>;
+
+    table = <span class="type">SideTable</span>::tableForPointer(<span class="literal">result</span>);
+    lock = &amp;table-&gt;slock;
+
+    spinlock_lock(lock);
+    <span class="keyword">if</span> (*location != <span class="literal">result</span>) {
+        spinlock_unlock(lock);
+        goto retry;
+    }
+
+    <span class="literal">result</span> = weak_read_no_lock(&amp;table-&gt;weak_table, location);
+
+    spinlock_unlock(lock);
+    <span class="keyword">return</span> <span class="literal">result</span>;
+}
+</code></pre><p>由此可知正在使用的weak变量不会被释放，但是如果大量使用weak变量会造成autoreleasePool中得对象大量增加，所以我们需要找到一个平衡点。</p>
+<h3 id="__autorelease">__autorelease</h3><p>这个修饰符很少用，等同于ARC无效时调用autorelease方法，一般可以配合@autorelease使用来达到减少瞬时内存峰值。</p>
+<p>ARC到这里也告一段落了，回过头来发现在这一段学习的过程中有一种豁然开朗的感觉，以前可能大概知道一点内存管理，但总是有一些点不能理解，在学习的道路上又进了一步。下一次准备看一下GCD那一块的知识，也算是对这本书的一个交代。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
+<h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br>]]>
+    
+    </summary>
+    
+      <category term="ARC" scheme="http://blog.tracyone.com/tags/ARC/"/>
+    
+      <category term="iOS" scheme="http://blog.tracyone.com/categories/iOS/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[深入浅出ARC(中)]]></title>

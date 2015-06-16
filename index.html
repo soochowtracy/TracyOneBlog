@@ -96,7 +96,7 @@
   	</div>
     <div class="article-info profile-block">
       <div class="article-info-block">
-        4
+        5
         <span>文章</span>
       </div>
       <div class="article-info-block">
@@ -122,6 +122,61 @@
   </div>
 </aside>
       <section id="main">
+      <article id="post-深入浅出ARC-下" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/16/深入浅出ARC-下/">深入浅出ARC(下)</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/16/深入浅出ARC-下/">
+    <time datetime="2015-06-16T14:24:52.000Z" itemprop="datePublished">2015-06-16</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
+<h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/16/深入浅出ARC-下/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/" data-id="ciazf9rvx0009i5324q57rxur" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/#ds-thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARC/">ARC</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+    
       <article id="post-深入浅出ARC-中" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -163,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciazb194h0004yg32cuylcak4" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciazf9rvo0004i53221a05cca" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
       
@@ -225,7 +280,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="ciazb194r0009yg32gqv301ut" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="ciazf9rvz000ci532na5ysp8e" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/#ds-thread" class="article-comment-link">评论</a>
       
@@ -281,7 +336,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="ciazb194u000cyg32759bbd7k" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="ciazf9rw1000fi532mulvfkh0" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/#ds-thread" class="article-comment-link">评论</a>
       
@@ -338,7 +393,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="ciazb194w000gyg32bo8a2mke" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="ciazf9rw4000ji532zcya0lcx" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/#ds-thread" class="article-comment-link">评论</a>
       
@@ -360,6 +415,23 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/16/深入浅出ARC-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/16/深入浅出ARC-下/" class="title">深入浅出ARC(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-16T14:24:52.000Z" itemprop="datePublished">2015-06-16</time></p>
+            </div>
+          </li>
         
           <li>
             
@@ -438,7 +510,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">4</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">5</span></li></ul>
     </div>
   </div>
 
@@ -447,7 +519,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -456,7 +528,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/block/" style="font-size: 10px;">block</a>
+      <a href="/tags/ARC/" style="font-size: 20px;">ARC</a> <a href="/tags/block/" style="font-size: 10px;">block</a>
     </div>
   </div>
 
@@ -465,7 +537,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
     </div>
   </div>
 

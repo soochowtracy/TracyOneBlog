@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入浅出ARC(下) | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的strong,weak,__autorelease修饰符背后发生了什么。
+__strong找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出ARC(下)">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的strong,weak,__autorelease修饰符背后发生了什么。
+__strong找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋">
+<meta property="og:updated_time" content="2015-06-16T14:27:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出ARC(下)">
+<meta name="twitter:description" content="终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的strong,weak,__autorelease修饰符背后发生了什么。
+__strong找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?fc6ac8ae95352665bd78e06dd31346e3";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        5
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        2
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-深入浅出ARC-下" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入浅出ARC(下)
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/16/深入浅出ARC-下/">
+    <time datetime="2015-06-16T14:24:52.000Z" itemprop="datePublished">2015-06-16</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
+<h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
+<pre><code>void
+objc_storeStrong<span class="list">(<span class="keyword">id</span> <span class="variable">*location, id obj)
+{
+    id prev = *</span>location<span class="comment">;</span>
+    if <span class="list">(<span class="keyword">obj</span> == prev)</span> {
+        return<span class="comment">;</span>
+    }
+    objc_retain<span class="list">(<span class="keyword">obj</span>)</span><span class="comment">;</span>
+    <span class="variable">*location = obj;
+    objc_release(prev);
+}</span></span>
+</code></pre><h3 id="__strong中的autorelease">__strong中的autorelease</h3><p>对于一个非持有对象赋值给strong类型的变量时，编译器会插入两个比较有意思的函数,这两个函数可以极大减少开销，减轻autoreleasePool的负担。</p>
+<p>1.两个函数都会做一个校验，看是否能够不加入autoreleasePool，直接返回对象。</p>
+<pre><code><span class="property">id</span> 
+objc_autoreleaseReturnValue(<span class="property">id</span> obj)
+{
+    <span class="keyword">if</span> (fastAutoreleaseForReturn(obj)) <span class="constant">return</span> obj;
+<span class="command">
+    return</span> objc_autorelease(obj);
+}
+
+<span class="property">id</span>
+objc_retainAutoreleasedReturnValue(<span class="property">id</span> obj)
+{
+    <span class="keyword">if</span> (fastRetainFromReturn(obj)) <span class="constant">return</span> obj;
+<span class="command">
+    return</span> objc_retain(obj);
+}
+</code></pre><p>2.这两个函数则是揭秘了如何做到不加入autereleasePool而延长生命周期的，具体并没有看太懂，貌似是和线程有关，通过线程的内存中转一下。看了一下，不同的cpu架构实现方式都不同。</p>
+<pre><code><span class="keyword">static</span> ALWAYS_INLINE 
+<span class="keyword">bool</span> fastAutoreleaseForReturn(<span class="keyword">id</span> obj)
+{
+    assert(tls_get_direct(AUTORELEASE_POOL_RECLAIM_KEY) == <span class="literal">nil</span>);
+
+    <span class="keyword">if</span> (callerAcceptsFastAutorelease(__builtin_return_address(<span class="number">0</span>))) {
+        tls_set_direct(AUTORELEASE_POOL_RECLAIM_KEY, obj);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+
+    <span class="keyword">return</span> <span class="literal">false</span>;
+}
+
+
+<span class="keyword">static</span> ALWAYS_INLINE
+<span class="keyword">bool</span> fastRetainFromReturn(<span class="keyword">id</span> obj)
+{
+    <span class="keyword">if</span> (obj == tls_get_direct(AUTORELEASE_POOL_RECLAIM_KEY)) {
+        tls_set_direct(AUTORELEASE_POOL_RECLAIM_KEY, <span class="number">0</span>);
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+
+    <span class="keyword">return</span> <span class="literal">false</span>;
+}
+</code></pre><h3 id="__weak">__weak</h3><p>赋值给weak类型变量的对象主要会经过这几步</p>
+<p>1.编译器增加objc_initWeak函数调用，然后会调用objc_storeWeak函数。</p>
+<pre><code>id
+objc_initWeak(id *addr, id <span class="function"><span class="keyword">val</span>)
+</span>{
+    *addr = <span class="number">0</span>;
+    <span class="keyword">if</span> (!<span class="function"><span class="keyword">val</span>) <span class="title">return</span> <span class="title">nil</span>;</span>
+    <span class="keyword">return</span> objc_storeWeak(addr, <span class="function"><span class="keyword">val</span>);</span>
+}
+</code></pre><p>2.这个函数看上去做了很多事，其实很多都可以略过不看，主要做了通过weak_unregister_no_lock函数把原来的对象unregister，通过weak_register_no_lock函数把新的对象register进去。最后一步就是通过setWeaklyReferenced_nolock函数使得引用计数那张散列表的weak引用对象的引用计数中标示为weak引用。</p>
+<pre><code><span class="function">id
+<span class="title">objc_storeWeak</span><span class="params">(id *location, id newObj)</span>
+</span>{
+    id oldObj;
+    SideTable *oldTable;
+    SideTable *newTable;
+    <span class="keyword">spinlock_t</span> *lock1;
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    <span class="keyword">spinlock_t</span> *lock2;
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+
+    <span class="comment">// Acquire locks for old and new values.</span>
+    <span class="comment">// Order by lock address to prevent lock ordering problems. </span>
+    <span class="comment">// Retry if the old value changes underneath us.</span>
+ retry:
+    oldObj = *location;
+
+    oldTable = SideTable::tableForPointer(oldObj);
+    newTable = SideTable::tableForPointer(newObj);
+
+    lock1 = &amp;newTable-&gt;slock;
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    lock2 = &amp;oldTable-&gt;slock;
+    <span class="keyword">if</span> (lock1 &gt; lock2) {
+        <span class="keyword">spinlock_t</span> *temp = lock1;
+        lock1 = lock2;
+        lock2 = temp;
+    }
+    <span class="keyword">if</span> (lock1 != lock2) spinlock_lock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+    spinlock_lock(lock1);
+
+    <span class="keyword">if</span> (*location != oldObj) {
+        spinlock_unlock(lock1);
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+        <span class="keyword">if</span> (lock1 != lock2) spinlock_unlock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+        <span class="keyword">goto</span> retry;
+    }
+
+    weak_unregister_no_lock(&amp;oldTable-&gt;<span class="keyword">weak_t</span>able, oldObj, location);
+    newObj = weak_register_no_lock(&amp;newTable-&gt;<span class="keyword">weak_t</span>able, newObj, location);
+    <span class="comment">// weak_register_no_lock returns nil if weak store should be rejected</span>
+
+    <span class="comment">// Set is-weakly-referenced bit in refcount table.</span>
+    <span class="keyword">if</span> (newObj  &amp;&amp;  !newObj-&gt;isTaggedPointer()) {
+        newObj-&gt;setWeaklyReferenced_nolock();
+    }
+
+    <span class="comment">// Do not set *location anywhere else. That would introduce a race.</span>
+    *location = newObj;
+
+    spinlock_unlock(lock1);
+<span class="preprocessor">#<span class="keyword">if</span> SIDE_TABLE_STRIPE &gt; 1</span>
+    <span class="keyword">if</span> (lock1 != lock2) spinlock_unlock(lock2);
+<span class="preprocessor">#<span class="keyword">endif</span></span>
+
+    <span class="keyword">return</span> newObj;
+}
+</code></pre><h3 id="__weak（没有证实的功能）">__weak（没有证实的功能）</h3><p>这里是书上看到的，同时也是在源码中能找到的，但是我却没有证实的一个知识点，就是使用了附有__weak修饰符的变量，会自动注册到autoreleasePool中。</p>
+<p>1.不管是从注释还是代码，都证实了在使用weak变量时为了保证对象没有释放，会添加到autoreleasePool中</p>
+<pre><code>/** 
+ * This loads <span class="keyword">the</span> object referenced <span class="keyword">by</span> a weak pointer <span class="keyword">and</span> returns <span class="keyword">it</span>, <span class="keyword">after</span>
+ * retaining <span class="keyword">and</span> autoreleasing <span class="keyword">the</span> object <span class="keyword">to</span> ensure <span class="keyword">that</span> <span class="keyword">it</span> stays alive
+ * long enough <span class="keyword">for</span> <span class="keyword">the</span> caller <span class="keyword">to</span> use <span class="keyword">it</span>. This function would be used
+ * anywhere a __weak variable <span class="keyword">is</span> used <span class="keyword">in</span> an expression.
+ * 
+ * @param location The weak pointer address
+ * 
+ * @<span class="constant">return</span> The object pointed <span class="keyword">to</span> <span class="keyword">by</span> \e location, <span class="keyword">or</span> \c nil <span class="keyword">if</span> \e location <span class="keyword">is</span> \c nil.
+ */
+<span class="property">id</span>
+objc_loadWeak(<span class="property">id</span> *location)
+{
+    <span class="keyword">if</span> (!*location) <span class="constant">return</span> nil;
+<span class="command">    return</span> objc_autorelease(objc_loadWeakRetained(location));
+}
+</code></pre><p>2.这里weak_read_no_lock函数会retain这个对象，然后通过外部autorelease。</p>
+<pre><code>id
+objc_loadWeakRetained(id *location)
+{
+    id <span class="literal">result</span>;
+
+    <span class="type">SideTable</span> *table;
+    spinlock_t *lock;
+
+ retry:
+    <span class="literal">result</span> = *location;
+    <span class="keyword">if</span> (!<span class="literal">result</span>) <span class="keyword">return</span> <span class="keyword">nil</span>;
+
+    table = <span class="type">SideTable</span>::tableForPointer(<span class="literal">result</span>);
+    lock = &amp;table-&gt;slock;
+
+    spinlock_lock(lock);
+    <span class="keyword">if</span> (*location != <span class="literal">result</span>) {
+        spinlock_unlock(lock);
+        goto retry;
+    }
+
+    <span class="literal">result</span> = weak_read_no_lock(&amp;table-&gt;weak_table, location);
+
+    spinlock_unlock(lock);
+    <span class="keyword">return</span> <span class="literal">result</span>;
+}
+</code></pre><p>由此可知正在使用的weak变量不会被释放，但是如果大量使用weak变量会造成autoreleasePool中得对象大量增加，所以我们需要找到一个平衡点。</p>
+<h3 id="__autorelease">__autorelease</h3><p>这个修饰符很少用，等同于ARC无效时调用autorelease方法，一般可以配合@autorelease使用来达到减少瞬时内存峰值。</p>
+<p>ARC到这里也告一段落了，回过头来发现在这一段学习的过程中有一种豁然开朗的感觉，以前可能大概知道一点内存管理，但总是有一些点不能理解，在学习的道路上又进了一步。下一次准备看一下GCD那一块的知识，也算是对这本书的一个交代。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/" data-id="ciazf9rvx0009i5324q57rxur" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/#ds-thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARC/">ARC</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/15/深入浅出ARC-中/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入浅出ARC(中)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/" data-title="深入浅出ARC(下)" data-url="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by DuoShuo.</a></noscript>
+      </div>
+  </section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/16/深入浅出ARC-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/16/深入浅出ARC-下/" class="title">深入浅出ARC(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-16T14:24:52.000Z" itemprop="datePublished">2015-06-16</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/15/深入浅出ARC-中/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/15/深入浅出ARC-中/" class="title">深入浅出ARC(中)</a></p>
+              <p class="item-date"><time datetime="2015-06-15T14:28:03.000Z" itemprop="datePublished">2015-06-15</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/14/深入浅出ARC-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/14/深入浅出ARC-上/" class="title">深入浅出ARC(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/10/Think-in-Block-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/10/Think-in-Block-下/" class="title">Think in Block(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-10T13:28:22.000Z" itemprop="datePublished">2015-06-10</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/Think-in-Block-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block-上/" class="title">Think in Block(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ARC/" style="font-size: 20px;">ARC</a> <a href="/tags/block/" style="font-size: 10px;">block</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tracy-one"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
