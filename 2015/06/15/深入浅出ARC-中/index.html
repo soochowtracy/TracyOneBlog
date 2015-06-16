@@ -13,7 +13,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
 <meta property="og:site_name" content="TracyOne">
 <meta property="og:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
 dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
-<meta property="og:updated_time" content="2015-06-16T01:48:46.000Z">
+<meta property="og:updated_time" content="2015-06-16T01:49:57.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入浅出ARC(中)">
 <meta name="twitter:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
@@ -154,11 +154,11 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
 </span>{
     <span class="keyword">if</span> (!obj) <span class="keyword">return</span> nil;
     objc_destructInstance(obj);    
-\<span class="preprocessor">#<span class="keyword">if</span> SUPPORT_GC</span>
+<span class="preprocessor">#<span class="keyword">if</span> SUPPORT_GC</span>
     <span class="keyword">if</span> (UseGC) {
         auto_zone_retain(gc_zone, obj); <span class="comment">// gc free expects rc==1</span>
     }
-\<span class="preprocessor">#<span class="keyword">endif</span></span>
+<span class="preprocessor">#<span class="keyword">endif</span></span>
     <span class="built_in">free</span>(obj);
     <span class="keyword">return</span> nil;
 }
@@ -355,7 +355,7 @@ static inline id <span class="built_in">*</span>autoreleaseFast<span class="para
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciayo8irx0004ul32c1kjz9tm" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciayoa0ba0004ve32fogwstcn" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
       
