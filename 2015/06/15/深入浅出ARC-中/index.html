@@ -13,7 +13,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
 <meta property="og:site_name" content="TracyOne">
 <meta property="og:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
 dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
-<meta property="og:updated_time" content="2015-06-15T14:29:18.000Z">
+<meta property="og:updated_time" content="2015-06-16T01:48:46.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入浅出ARC(中)">
 <meta name="twitter:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
@@ -148,8 +148,21 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
     <div class="article-entry" itemprop="articleBody">
       
         <p>这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。</p>
-<h2 id="dealloc搞得鬼">dealloc搞得鬼</h2><p>上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。<br><a id="more"></a><br>    id<br>    object_dispose(id obj)<br>    {<br>        if (!obj) return nil;<br>        objc_destructInstance(obj);<br>    #if SUPPORT_GC<br>        if (UseGC) {<br>            auto_zone_retain(gc_zone, obj); // gc free expects rc==1<br>        }<br>    #endif<br>        free(obj);<br>        return nil;<br>    }</p>
-<p>在这里大致做了三件事，调用c++ destructors，移除关联对象，清理散列表中得一些值。</p>
+<h2 id="dealloc搞得鬼">dealloc搞得鬼</h2><p>上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。<br><a id="more"></a></p>
+<pre><code><span class="function">id 
+<span class="title">object_dispose</span><span class="params">(id obj)</span>
+</span>{
+    <span class="keyword">if</span> (!obj) <span class="keyword">return</span> nil;
+    objc_destructInstance(obj);    
+\<span class="preprocessor">#<span class="keyword">if</span> SUPPORT_GC</span>
+    <span class="keyword">if</span> (UseGC) {
+        auto_zone_retain(gc_zone, obj); <span class="comment">// gc free expects rc==1</span>
+    }
+\<span class="preprocessor">#<span class="keyword">endif</span></span>
+    <span class="built_in">free</span>(obj);
+    <span class="keyword">return</span> nil;
+}
+</code></pre><p>在这里大致做了三件事，调用c++ destructors，移除关联对象，清理散列表中得一些值。</p>
 <pre><code>void <span class="built_in">*</span>objc_destructInstance<span class="params">(id obj)</span> 
 {
     <span class="keyword">if</span> <span class="params">(obj)</span> {
@@ -342,7 +355,7 @@ static inline id <span class="built_in">*</span>autoreleaseFast<span class="para
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciaxzyo0r0004oj32wpnrgw1o" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciayo8irx0004ul32c1kjz9tm" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
       
