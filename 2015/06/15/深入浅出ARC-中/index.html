@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入浅出ARC(中) | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
+dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出ARC(中)">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
+dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
+<meta property="og:updated_time" content="2015-06-15T14:29:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出ARC(中)">
+<meta name="twitter:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
+dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        4
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        2
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-深入浅出ARC-中" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入浅出ARC(中)
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/15/深入浅出ARC-中/">
+    <time datetime="2015-06-15T14:28:03.000Z" itemprop="datePublished">2015-06-15</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。</p>
+<h2 id="dealloc搞得鬼">dealloc搞得鬼</h2><p>上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。<br><a id="more"></a><br>    id<br>    object_dispose(id obj)<br>    {<br>        if (!obj) return nil;<br>        objc_destructInstance(obj);<br>    #if SUPPORT_GC<br>        if (UseGC) {<br>            auto_zone_retain(gc_zone, obj); // gc free expects rc==1<br>        }<br>    #endif<br>        free(obj);<br>        return nil;<br>    }</p>
+<p>在这里大致做了三件事，调用c++ destructors，移除关联对象，清理散列表中得一些值。</p>
+<pre><code>void <span class="built_in">*</span>objc_destructInstance<span class="params">(id obj)</span> 
+{
+    <span class="keyword">if</span> <span class="params">(obj)</span> {
+        <span class="comment">// Read all of the flags at once for performance.</span>
+        bool cxx = obj-&gt;hasCxxDtor<span class="params">()</span>;
+        bool assoc = <span class="built_in">!</span>UseGC &amp;&amp; obj-&gt;hasAssociatedObjects<span class="params">()</span>;
+        bool dealloc = <span class="built_in">!</span>UseGC;
+
+        <span class="comment">// This order is important.</span>
+        <span class="keyword">if</span> <span class="params">(cxx)</span> object_cxxDestruct<span class="params">(obj)</span>;
+        <span class="keyword">if</span> <span class="params">(assoc)</span> _object_remove_assocations<span class="params">(obj)</span>;
+        <span class="keyword">if</span> <span class="params">(dealloc)</span> obj-&gt;clearDeallocating<span class="params">()</span>;
+    }
+    return obj;
+}
+</code></pre><h3 id="destructors">destructors</h3><p>1.从名字上看能大概看出是一个c++的析构函数，如果不是isTaggedPointer则调用object_cxxDestructFromClass这个析构函数</p>
+<pre><code>void object_cxxDestruct<span class="params">(id obj)</span>
+{
+    <span class="keyword">if</span> <span class="params">(!obj)</span> return;
+    <span class="keyword">if</span> <span class="params">(obj-&gt;isTaggedPointer<span class="params">()</span>)</span> return;
+    object_cxxDestructFromClass<span class="params">(obj, obj-&gt;ISA<span class="params">()</span>)</span>;
+}
+</code></pre><p>2.这里关键就是取到真正的析构函数，所以用了个函数指针，因为需要做一系列的判断，最后调用</p>
+<pre><code>static void object_cxxDestructFromClass<span class="params">(id obj, Class cls)</span>
+{
+    void <span class="params">(*dtor)</span><span class="params">(id)</span>;
+
+    <span class="comment">// Call cls's dtor first, then superclasses's dtors.</span>
+
+    <span class="keyword">for</span> <span class="params">( ; cls; cls = cls-&gt;superclass)</span> {
+        <span class="keyword">if</span> <span class="params">(!cls-&gt;hasCxxDtor<span class="params">()</span>)</span> return; 
+        dtor = <span class="params">(void<span class="params">(*)</span><span class="params">(id)</span>)</span>
+            lookupMethodInClassAndLoadCache<span class="params">(cls, SEL_cxx_destruct)</span>;
+        <span class="keyword">if</span> <span class="params">(dtor != <span class="params">(void<span class="params">(*)</span><span class="params">(id)</span>)</span>_objc_msgForward_impcache)</span> {
+            <span class="keyword">if</span> <span class="params">(PrintCxxCtors)</span> {
+                _objc_inform<span class="params">(<span class="string">"CXX: calling C++ destructors for class %s"</span>, 
+                             cls-&gt;nameForLogging<span class="params">()</span>)</span>;
+            }
+            <span class="params">(*dtor)</span><span class="params">(obj)</span>;
+        }
+    }
+}
+</code></pre><p>3.这个就是查找析构函数的函数，先从缓存表中找，再从方法列表中找，如果找到还要放到缓存表中，否则的话就调用方法转发，并且缓存起来。</p>
+<pre><code><span class="type">IMP</span> lookupMethodInClassAndLoadCache(<span class="type">Class</span> cls, <span class="type">SEL</span> sel)
+{
+    <span class="type">Method</span> meth;
+    <span class="type">IMP</span> imp;
+
+    // fixme this <span class="keyword">is</span> incomplete - no resolver, +initialize, <span class="type">GC</span> - 
+    // but it's only used <span class="keyword">for</span> .cxx_construct/destruct so we don't care
+    assert(sel == <span class="type">SEL_cxx_construct</span>  ||  sel == <span class="type">SEL_cxx_destruct</span>);
+
+    // <span class="type">Search</span> cache first.
+    imp = cache_getImp(cls, sel);
+    <span class="keyword">if</span> (imp) <span class="keyword">return</span> imp;
+
+    // <span class="type">Cache</span> miss. <span class="type">Search</span> <span class="keyword">method</span> list.
+
+    rwlock_read(&amp;runtimeLock);
+
+    meth = getMethodNoSuper_nolock(cls, sel);
+
+    <span class="keyword">if</span> (meth) {
+        // <span class="type">Hit</span> <span class="keyword">in</span> <span class="keyword">method</span> list. <span class="type">Cache</span> it.
+        cache_fill(cls, sel, meth-&gt;imp);
+        rwlock_unlock_read(&amp;runtimeLock);
+        <span class="keyword">return</span> meth-&gt;imp;
+    } <span class="keyword">else</span> {
+        // <span class="type">Miss</span> <span class="keyword">in</span> <span class="keyword">method</span> list. <span class="type">Cache</span> objc_msgForward.
+        cache_fill(cls, sel, _objc_msgForward_impcache);
+        rwlock_unlock_read(&amp;runtimeLock);
+        <span class="keyword">return</span> _objc_msgForward_impcache;
+    }
+}
+</code></pre><h3 id="关联对象">关联对象</h3><p>关联对象我记得之前有个大神讲过，看的有点迷糊，就自己翻了下源码，主要就一个函数，大致思路就是关联对象会存在一张映射表中，根据传入的object找到关联对象映射表，遍历映射表添加到vector中，然后最后清楚相关数据，最后的时候遍历vector，release关联对象。</p>
+<pre><code>void _object_remove_assocations<span class="params">(id object)</span> {
+    vector&lt; ObjcAssociation,ObjcAllocator&lt;ObjcAssociation&gt; &gt; elements;
+    {
+        AssociationsManager manager;
+        AssociationsHashMap &amp;associations<span class="params">(manager.associations<span class="params">()</span>)</span>;
+        <span class="keyword">if</span> <span class="params">(associations.size<span class="params">()</span> == <span class="number">0</span>)</span> return;
+        disguised_ptr_t disguised_object = DISGUISE<span class="params">(object)</span>;
+        AssociationsHashMap::iterator i = associations.find<span class="params">(disguised_object)</span>;
+        <span class="keyword">if</span> <span class="params">(i != associations.end<span class="params">()</span>)</span> {
+            <span class="comment">// copy all of the associations that need to be removed.</span>
+            ObjectAssociationMap <span class="built_in">*</span>refs = i-&gt;second;
+            <span class="keyword">for</span> <span class="params">(ObjectAssociationMap::iterator j = refs-&gt;begin<span class="params">()</span>, end = refs-&gt;end<span class="params">()</span>; j != end; ++j)</span> {
+                elements.push_back<span class="params">(j-&gt;second)</span>;
+            }
+            <span class="comment">// remove the secondary table.</span>
+            delete refs;
+            associations.erase<span class="params">(i)</span>;
+        }
+    }
+    <span class="comment">// the calls to releaseValue() happen outside of the lock.</span>
+    for_each<span class="params">(elements.begin<span class="params">()</span>, elements.end<span class="params">()</span>, ReleaseValue<span class="params">()</span>)</span>;
+}
+</code></pre><h3 id="clearDeallocating">clearDeallocating</h3><p>这里做的主要是清理weak变量，具体内容可以参考<a href="http://blog.sunnyxx.com/2014/04/02/objc_dig_arc_dealloc/" target="_blank" rel="external">sunny大神的博客</a></p>
+<pre><code><span class="tag">inline</span> <span class="tag">void</span> 
+<span class="rule"><span class="attribute">objc_object</span>:<span class="value">:<span class="function">clearDeallocating</span>()
+{
+    <span class="function">sidetable_clearDeallocating</span>()</span></span>;
+}
+</code></pre><p>2.还是取散列表SideTable，遍历是否有weak引用，it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED这里用到的就是前面所说的宏，作用就是标示是否有weak引用。如果有旧调用weak_clear_no_lock这个函数，这个函数中会遍历清除所有weak引用，这就是Objc不需要我们手动清理weak引用的关键点。</p>
+<pre><code><span class="literal">void</span> 
+objc_object<span class="tag">::sidetable_clearDeallocating</span>()
+{
+    SideTable <span class="subst">*</span>table <span class="subst">=</span> SideTable<span class="tag">::tableForPointer</span>(this);
+
+    <span class="comment">// clear any weak table items</span>
+    <span class="comment">// clear extra retain count and deallocating bit</span>
+    <span class="comment">// (<span class="doctag"><span class="keyword">fixme</span></span> warn or abort if extra retain count == 0 ?)</span>
+    spinlock_lock(<span class="subst">&amp;</span>table<span class="subst">-&gt;</span>slock);
+    RefcountMap<span class="tag">::iterator</span> it <span class="subst">=</span> table<span class="subst">-&gt;</span>refcnts<span class="built_in">.</span>find(this);
+    <span class="keyword">if</span> (it <span class="subst">!=</span> table<span class="subst">-&gt;</span>refcnts<span class="built_in">.</span>end()) {
+        <span class="keyword">if</span> (it<span class="subst">-&gt;</span>second <span class="subst">&amp;</span> SIDE_TABLE_WEAKLY_REFERENCED) {
+            weak_clear_no_lock(<span class="subst">&amp;</span>table<span class="subst">-&gt;</span>weak_table, (id)this);
+        }
+        table<span class="subst">-&gt;</span>refcnts<span class="built_in">.</span>erase(it);
+    }
+    spinlock_unlock(<span class="subst">&amp;</span>table<span class="subst">-&gt;</span>slock);
+}
+</code></pre><h2 id="autorelease的内幕">autorelease的内幕</h2><p>这个专题基本讲烂了，先上几篇我参考的优质博客<br><a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">sunnyxx的《黑幕背后的Autorelease》</a><br><a href="http://blog.leichunfeng.com/blog/2015/05/31/objective-c-autorelease-pool-implementation-principle/" target="_blank" rel="external">雷纯锋的《Objective-C Autorelease Pool 的实现原理》</a></p>
+<p>大神们已经讲的很详细了，不过为了内容的完整，还是硬着头皮自己去理一下逻辑，写一点不一样的东西，所以下面并不会去探究autoreleasePool实现原理，只看NSObject中autorelease函数的实现。</p>
+<h3 id="autorelease函数做了什么">autorelease函数做了什么</h3><p>1.前面两步都是简单调用底层函数，最终调用的是rootAutorelease2函数</p>
+<pre><code>- (<span class="keyword">id</span>)autorelease {
+    <span class="keyword">return</span> ((<span class="keyword">id</span>)<span class="keyword">self</span>)-&gt;rootAutorelease();
+}
+
+<span class="keyword">inline</span> <span class="keyword">id</span> 
+objc_object::rootAutorelease()
+{
+    assert(!UseGC);
+
+    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> (<span class="keyword">id</span>)<span class="keyword">this</span>;
+    <span class="keyword">if</span> (fastAutoreleaseForReturn((<span class="keyword">id</span>)<span class="keyword">this</span>)) <span class="keyword">return</span> (<span class="keyword">id</span>)<span class="keyword">this</span>;
+
+    <span class="keyword">return</span> rootAutorelease2();
+}
+</code></pre><p>3.这一步会调用AutoreleasePoolPage的autorelease函数，关于AutoreleasePoolPage的实现可以看上面两位大神的讲解。</p>
+<pre><code>__<span class="tag">attribute__</span>((<span class="tag">noinline</span>,<span class="tag">used</span>))
+<span class="tag">id</span> 
+<span class="rule"><span class="attribute">objc_object</span>:<span class="value">:<span class="function">rootAutorelease2</span>()
+{
+    <span class="function">assert</span>(!<span class="function">isTaggedPointer</span>())</span></span>;
+    <span class="tag">return</span> <span class="rule"><span class="attribute">AutoreleasePoolPage</span>:<span class="value">:<span class="function">autorelease</span>((id)this)</span></span>;
+}
+</code></pre><p>4.这两步都是AutoreleasePoolPage的方法，主要就是判断当前page是否已满，如果没有就直接add，如果已经满了则会去重新new一个page，然后c设为当前页，并且添加进去，如果当前没有page，则会初始化第一个page然后添加。</p>
+<pre><code>static inline id autorelease<span class="params">(id obj)</span>
+    {
+        assert<span class="params">(obj)</span>;
+        assert<span class="params">(!obj-&gt;isTaggedPointer<span class="params">()</span>)</span>;
+        id <span class="built_in">*</span>dest __unused = autoreleaseFast<span class="params">(obj)</span>;
+        assert<span class="params">(!dest  ||  *dest == obj)</span>;
+        return obj;
+    }
+
+static inline id <span class="built_in">*</span>autoreleaseFast<span class="params">(id obj)</span>
+    {
+        AutoreleasePoolPage <span class="built_in">*</span>page = hotPage<span class="params">()</span>;
+        <span class="keyword">if</span> <span class="params">(page &amp;&amp; !page-&gt;full<span class="params">()</span>)</span> {
+            return page-&gt;add<span class="params">(obj)</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> <span class="params">(page)</span> {
+            return autoreleaseFullPage<span class="params">(obj, page)</span>;
+        } <span class="keyword">else</span> {
+            return autoreleaseNoPage<span class="params">(obj)</span>;
+        }
+    }
+</code></pre><h2 id="ARC使用原则">ARC使用原则</h2><h3 id="修饰符">修饰符</h3><p>其实这些东西都是老掉牙的内容了，我就简单说几点吧。这些不是关键，同样是为了内容完整性考虑。</p>
+<ul>
+<li>__strong 这个就是代表了强引用，在超出作用域的时候会release一下，大多数情况下strong已经能够保证内存管理正确了。</li>
+<li>__weak 这个就是用来处理那些strong解决不了的情况，循环引用。只能在iOS5以上使用</li>
+<li>__unsafe_unretain 这个就意味着不属于编译器的内存管理，如果指向的对象已经释放，野指针。</li>
+<li>__autoreleasing 这个东西几乎很少用，因为大多数时间编译器知道哪些变量是需要autoreleasing。比如说在取得非自己持有的对象时，该对象自动被加入autoreleasing pool。再比如说访问id* 类型的变量。</li>
+</ul>
+<p>每个id类型的对象必须有一种修饰符，在ARC下，其中__strong是默认的修饰符。除了unsafe_unretain，其余的可以保证初始化为nil。</p>
+<h3 id="规则">规则</h3><ol>
+<li>不能使用retain/release/retainCount/autorelease。</li>
+<li>不能使用NSAllocateObject/NSDeallocateObject。</li>
+<li>必须遵守内存管理的命名规则。</li>
+<li>不能显示的调用dealloc，比如[super dealloc]。</li>
+<li>用@autorelease代替NSAutoreleasePool。</li>
+<li>不能使用NSZone。</li>
+<li>对象类型变量不能作为C语言结构体成员（可以用__unsafe_unretain修饰之后使用）</li>
+<li>不能显示转换id和void*（可以通过<em>_bridge,\</em>_bridge_retained,__bridge_transfer）。</li>
+</ol>
+<p>这些都是书上有的，基本很全了。</p>
+<h2 id="萌萌的小尾巴">萌萌的小尾巴</h2><p>到此ARC内存管理这一块讲了很多了，还剩下ARC具体实现了，这个放到下面一篇分析，ARC是由编译器来管理内存了，但实际上单纯靠编译器是实现不了的，还需要runtime来辅助。所以实际上ARC使用了Clang和Objc库来完成内存管理的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="ciaxzyo0r0004oj32wpnrgw1o" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARC/">ARC</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/14/深入浅出ARC-上/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入浅出ARC(上)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-title="深入浅出ARC(中)" data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by DuoShuo.</a></noscript>
+      </div>
+  </section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/15/深入浅出ARC-中/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/15/深入浅出ARC-中/" class="title">深入浅出ARC(中)</a></p>
+              <p class="item-date"><time datetime="2015-06-15T14:28:03.000Z" itemprop="datePublished">2015-06-15</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/14/深入浅出ARC-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/14/深入浅出ARC-上/" class="title">深入浅出ARC(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-14T15:14:12.000Z" itemprop="datePublished">2015-06-14</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/10/Think-in-Block-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/10/Think-in-Block-下/" class="title">Think in Block(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-10T13:28:22.000Z" itemprop="datePublished">2015-06-10</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/07/Think-in-Block-上/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/07/Think-in-Block-上/" class="title">Think in Block(上)</a></p>
+              <p class="item-date"><time datetime="2015-06-07T13:14:38.000Z" itemprop="datePublished">2015-06-07</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ARC/" style="font-size: 10px;">ARC</a> <a href="/tags/block/" style="font-size: 10px;">block</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tracy-one"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
