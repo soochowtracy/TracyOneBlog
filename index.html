@@ -153,16 +153,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
+        <p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。这里由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
 <pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio,h&gt;</span>
 
 <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
     <span class="built_in">printf</span>(<span class="string">"hello, world"</span>);
 }
-</code></pre><h2 id="系统简介">系统简介</h2><ol>
-<li>信息就是位+上下文</li>
-</ol>
-<p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上的，存储器中得，网络中得）都是由一串位表示的，唯一区别只是上下文。</p>
+</code></pre><h2 id="系统简介">系统简介</h2><h3 id="信息就是位+上下文">信息就是位+上下文</h3><p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上，存储器中，网络中）都是由一串位表示的，唯一区别只是上下文。</p>
         
           <p class="article-more-link">
             <a href="/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/#more">Read More</a>
@@ -171,7 +168,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/" data-id="cib2c62hz000fdq329ple8v7u" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/" data-id="cib4fpira000fmsgnxkj9swb1" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/#ds-thread" class="article-comment-link">评论</a>
       
@@ -226,7 +223,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/" data-id="cib2c62ht0009dq32mj7wt67z" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/" data-id="cib4fpir40009msgnv0auhzvb" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/#ds-thread" class="article-comment-link">评论</a>
       
@@ -281,7 +278,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="cib2c62hf0004dq32lcjr0ddt" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="cib4fpiqq0004msgnstpn0zxp" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
       
@@ -326,7 +323,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。</p>
 <h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
 <ol>
 <li>自己生成的对象，自己持有。</li>
@@ -343,7 +340,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="cib2c62hw000cdq32a5duref1" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="cib4fpir7000cmsgn38wcdpjy" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/#ds-thread" class="article-comment-link">评论</a>
       
@@ -399,7 +396,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="cib2c62i3000kdq32vbevzxdj" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="cib4fpirf000kmsgnz4wif4t2" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/#ds-thread" class="article-comment-link">评论</a>
       
@@ -456,7 +453,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="cib2c62i7000odq32vxwwblh3" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/" data-id="cib4fpirj000omsgnhi4upyis" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/07/Think-in-Block-上/#ds-thread" class="article-comment-link">评论</a>
       

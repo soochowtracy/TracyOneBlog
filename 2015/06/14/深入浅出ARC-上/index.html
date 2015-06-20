@@ -5,7 +5,7 @@
   
   <title>深入浅出ARC(上) | TracyOne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+  <meta name="description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。
 内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
 
 自己生成的对">
@@ -13,14 +13,14 @@
 <meta property="og:title" content="深入浅出ARC(上)">
 <meta property="og:url" content="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/index.html">
 <meta property="og:site_name" content="TracyOne">
-<meta property="og:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+<meta property="og:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。
 内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
 
 自己生成的对">
-<meta property="og:updated_time" content="2015-06-14T15:22:54.000Z">
+<meta property="og:updated_time" content="2015-06-20T02:57:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入浅出ARC(上)">
-<meta name="twitter:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。
+<meta name="twitter:description" content="最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。
 内存管理大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：
 
 自己生成的对">
@@ -162,7 +162,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+        <p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。</p>
 <h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
 <ol>
 <li>自己生成的对象，自己持有。</li>
@@ -183,7 +183,7 @@ _objc_rootAlloc(<span class="class"><span class="keyword">Class</span> <span cla
 </span>{
     <span class="keyword">return</span> callAlloc(cls, <span class="keyword">false</span><span class="comment">/*checkNil*/</span>, <span class="keyword">true</span><span class="comment">/*allocWithZone*/</span>);
 }
-</code></pre><p>3.这里调用的代码就变多了，其实大部分都不需要看，关键就在class_createInstance上，这也是真实地创建实例的方法。其他代码主要是</p>
+</code></pre><p>3.这里调用的代码就变多了，其实大部分都不需要看，关键就在class_createInstance上，这也是真实地创建实例的方法。其他代码主要是去判断是否自定义alloc等。</p>
 <pre><code><span class="keyword">static</span> ALWAYS_INLINE <span class="keyword">id</span>
 callAlloc(Class cls, <span class="keyword">bool</span> checkNil, <span class="keyword">bool</span> allocWithZone=<span class="literal">false</span>)
 {
@@ -342,7 +342,7 @@ objc_object::rootRelease<span class="params">()</span>
     <span class="keyword">if</span> <span class="params">(isTaggedPointer<span class="params">()</span>)</span> return <span class="literal">false</span>;
     return sidetable_release<span class="params">(<span class="literal">true</span>)</span>;
 }
-</code></pre><p>3.主要看一下这里，其实加上SIDE_TABLE_RC_ONE这个便宜是为了空出SIDE_TABLE_DEALLOCATING这个标示，上定义大家就能懂了</p>
+</code></pre><p>3.主要看一下这里，其实加上SIDE_TABLE_RC_ONE这个偏移是为了空出SIDE_TABLE_DEALLOCATING这个标示，看下定义大家就能懂了</p>
 <p>// The order of these bits is important.</p>
 <ul>
 <li>#define SIDE_TABLE_WEAKLY_REFERENCED (1UL&lt;&lt;0)</li>
@@ -350,7 +350,7 @@ objc_object::rootRelease<span class="params">()</span>
 <li>#define SIDE_TABLE_RC_ONE            (1UL&lt;&lt;2)  // MSB-ward of deallocating bit</li>
 <li>#define SIDE_TABLE_RC_SHIFT 2</li>
 </ul>
-<p>4.SIDE_TABLE_WEAKLY_REFERENCED是代表了弱引用，SIDE_TABLE_DEALLOCATING代表了需要释放的引用，SIDE_TABLE_RC_ONE这个则是正常的的偏移。值是和SIDE_TABLE_RC_SHIFT偏移一样的。<br>release比retain稍微复杂的地方就是他需要判断最终是否需要调用dealloc，所以多了很多判断和赋值，大概步骤就是1.先遍历变量是否存在，如果不存在就调用dealloc，2.如果存在再判断是否小于SIDE_TABLE_DEALLOCATING，如果成立同1，3.否则就减去一个SIDE_TABLE_RC_ONE4.最后看do_dealloc是否需要调用dealloc。</p>
+<p>4.SIDE_TABLE_WEAKLY_REFERENCED是代表了有弱引用，SIDE_TABLE_DEALLOCATING代表了需要释放的引用，SIDE_TABLE_RC_ONE这个则是正常的的偏移。值是和SIDE_TABLE_RC_SHIFT偏移一样的。<br>release比retain稍微复杂的地方就是他需要判断最终是否需要调用dealloc，所以多了很多判断和赋值，大概步骤就是1.先遍历变量是否存在，如果不存在就调用dealloc，2.如果存在再判断是否小于SIDE_TABLE_DEALLOCATING，如果成立同1，3.否则就减去一个SIDE_TABLE_RC_ONE4.最后看do_dealloc是否需要调用dealloc。</p>
 <pre><code>bool 
 objc_object::sidetable_release<span class="params">(bool performDealloc)</span>
 {
@@ -424,7 +424,7 @@ objc_object::rootDealloc<span class="params">()</span>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="cib2c62hw000cdq32a5duref1" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/" data-id="cib4fpir7000cmsgn38wcdpjy" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/#ds-thread" class="article-comment-link">评论</a>
       

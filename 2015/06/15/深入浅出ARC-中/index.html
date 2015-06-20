@@ -13,7 +13,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
 <meta property="og:site_name" content="TracyOne">
 <meta property="og:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
 dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。">
-<meta property="og:updated_time" content="2015-06-16T01:49:57.000Z">
+<meta property="og:updated_time" content="2015-06-20T02:57:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入浅出ARC(中)">
 <meta name="twitter:description" content="这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。
@@ -194,7 +194,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
     <span class="keyword">if</span> <span class="params">(obj-&gt;isTaggedPointer<span class="params">()</span>)</span> return;
     object_cxxDestructFromClass<span class="params">(obj, obj-&gt;ISA<span class="params">()</span>)</span>;
 }
-</code></pre><p>2.这里关键就是取到真正的析构函数，所以用了个函数指针，因为需要做一系列的判断，最后调用</p>
+</code></pre><p>2.这里关键就是取到真正的析构函数，所以用了个函数指针，因为需要做一系列的判断，最后调用lookupMethodInClassAndLoadCache函数。</p>
 <pre><code>static void object_cxxDestructFromClass<span class="params">(id obj, Class cls)</span>
 {
     void <span class="params">(*dtor)</span><span class="params">(id)</span>;
@@ -214,7 +214,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
         }
     }
 }
-</code></pre><p>3.这个就是查找析构函数的函数，先从缓存表中找，再从方法列表中找，如果找到还要放到缓存表中，否则的话就调用方法转发，并且缓存起来。</p>
+</code></pre><p>3.这个就是查找析构函数的函数，先从缓存表中找，再从方法列表中找，如果找到还要放到缓存表中，找不到的话就调用方法转发，并且缓存起来。</p>
 <pre><code><span class="type">IMP</span> lookupMethodInClassAndLoadCache(<span class="type">Class</span> cls, <span class="type">SEL</span> sel)
 {
     <span class="type">Method</span> meth;
@@ -275,7 +275,7 @@ dealloc搞得鬼上一次看到这里发现了一个objc_destructInstance函数�
 {
     <span class="function">sidetable_clearDeallocating</span>()</span></span>;
 }
-</code></pre><p>2.还是取散列表SideTable，遍历是否有weak引用，it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED这里用到的就是前面所说的宏，作用就是标示是否有weak引用。如果有旧调用weak_clear_no_lock这个函数，这个函数中会遍历清除所有weak引用，这就是Objc不需要我们手动清理weak引用的关键点。</p>
+</code></pre><p>2.还是取散列表SideTable，遍历是否有weak引用，it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED这里用到的就是前面所说的宏，作用就是标示是否有weak引用。如果有就调用weak_clear_no_lock这个函数，这个函数中会遍历清除所有weak引用，这就是Objc不需要我们手动清理weak引用的关键点。</p>
 <pre><code><span class="literal">void</span> 
 objc_object<span class="tag">::sidetable_clearDeallocating</span>()
 {
@@ -319,7 +319,7 @@ objc_object::rootAutorelease()
     <span class="function">assert</span>(!<span class="function">isTaggedPointer</span>())</span></span>;
     <span class="tag">return</span> <span class="rule"><span class="attribute">AutoreleasePoolPage</span>:<span class="value">:<span class="function">autorelease</span>((id)this)</span></span>;
 }
-</code></pre><p>4.这两步都是AutoreleasePoolPage的方法，主要就是判断当前page是否已满，如果没有就直接add，如果已经满了则会去重新new一个page，然后c设为当前页，并且添加进去，如果当前没有page，则会初始化第一个page然后添加。</p>
+</code></pre><p>4.这两步都是AutoreleasePoolPage的方法，主要就是判断当前page是否已满，如果没有就直接add，如果已经满了则会去重新new一个page，然后设为当前页，并且添加进去，如果当前没有page，则会初始化第一个page然后添加。</p>
 <pre><code>static inline id autorelease<span class="params">(id obj)</span>
     {
         assert<span class="params">(obj)</span>;
@@ -364,7 +364,7 @@ static inline id <span class="built_in">*</span>autoreleaseFast<span class="para
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="cib2c62hf0004dq32lcjr0ddt" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/" data-id="cib4fpiqq0004msgnstpn0zxp" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/#ds-thread" class="article-comment-link">评论</a>
       

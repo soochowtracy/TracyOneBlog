@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-06-18T15:23:28.000Z</updated>
+  <updated>2015-06-20T02:36:40.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -20,32 +20,24 @@
     <link href="http://blog.tracyone.com/2015/06/18/iOS%E8%8F%9C%E9%B8%9F%E7%9A%84CS%E4%B9%8B%E8%B7%AF%EF%BC%88%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8%EF%BC%89/"/>
     <id>http://blog.tracyone.com/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/</id>
     <published>2015-06-18T15:08:16.000Z</published>
-    <updated>2015-06-18T15:23:28.000Z</updated>
-    <content type="html"><![CDATA[<p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
+    <updated>2015-06-20T02:36:40.000Z</updated>
+    <content type="html"><![CDATA[<p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。这里由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
 <pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio,h&gt;</span>
 
 <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
     <span class="built_in">printf</span>(<span class="string">"hello, world"</span>);
 }
-</code></pre><h2 id="系统简介">系统简介</h2><ol>
-<li>信息就是位+上下文</li>
-</ol>
-<p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上的，存储器中得，网络中得）都是由一串位表示的，唯一区别只是上下文。</p>
+</code></pre><h2 id="系统简介">系统简介</h2><h3 id="信息就是位+上下文">信息就是位+上下文</h3><p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上，存储器中，网络中）都是由一串位表示的，唯一区别只是上下文。</p>
 <a id="more"></a>
-<ol>
-<li>程序被其他程序翻译成不同的格式</li>
-</ol>
-<p>本身hello程序没有任何意义，只是一个简单地C语言源程序，能够被人读懂，但是系统却不认识。但是经过编译系统一系列的处理过后，最终会称为一个可执行的目标程序。具体的翻译过程是这样的：</p>
+<h3 id="程序被其他程序翻译成不同的格式">程序被其他程序翻译成不同的格式</h3><p>本身hello程序没有任何意义，只是一个简单地C语言源程序，能够被人读懂，然而系统却不认识。但是经过编译系统一系列的处理过后，最终会成为一个可执行的目标程序。具体的翻译过程是这样的：</p>
 <p>hello.c  - (预处理器) - hello.i    - (编译器) - hello.s - (汇编器) - hello.o - (链接器) - hello</p>
 <ul>
-<li>第预处理阶段，经过预处理器展开预处理程序，填充stdio库中得程序得到另一个C程序，通常用.i做后缀。</li>
+<li>预处理阶段，经过预处理器展开预处理程序，填充stdio库中的程序得到另一个C程序，通常用.i做后缀。</li>
 <li>编译阶段，经过编译器翻译成汇编程序，这时候语言已经很接近机器指令了，<code>不同的的高级语言，不同的编译器，最终得到的却是通用的汇编程序</code></li>
 <li>汇编阶段，通过汇编器将汇编程序翻译成机器语言指令，然后打包成一种叫<code>relocatable object program</code>格式的目标文件</li>
 <li>链接阶段，链接器把不同的目标程序链接合并处理，最终产出一个可执行文件。</li>
 </ul>
-<ol>
-<li><p>了解编译系统如何工作的益处</p>
-<ul>
+<h3 id="了解编译系统如何工作的益处">了解编译系统如何工作的益处</h3><ul>
 <li><p>优化程序性能 （一个switch语句是否总是比一系列if-else高校，一个函数调用的开销有多大，while和for哪个更有效，指针还是数组等等）</p>
 </li>
 <li><p>理解链接时出现的错误 （很长时间，在链接过程的错误总是最让人头疼的，静态库和动态库的区别，有些问题会知道运行时才暴露等等）</p>
@@ -53,46 +45,29 @@
 <li><p>避免安全漏洞 （缓冲区溢出是困扰网络和Internet服务器上安全漏洞的主要原因）</p>
 </li>
 </ul>
-</li>
-</ol>
-<h2 id="处理器">处理器</h2><ol>
-<li>处理器读并解释存储在存储器中得指令</li>
-</ol>
-<p>当前面的程序已经翻译成一个可执行程序后，我们开始在操作系统上执行，会在控制台上打印出hello， world这些内容，那么这之间发生了什么呢？</p>
-<h3 id="硬件组成">硬件组成</h3><ul>
+<h2 id="处理器">处理器</h2><h3 id="处理器读并解释存储在存储器中得指令">处理器读并解释存储在存储器中得指令</h3><p>当前面的程序已经翻译成一个可执行程序后，我们开始在操作系统上执行，会在控制台上打印出hello， world这些内容，那么这之间发生了什么呢？</p>
+<h5 id="硬件组成">硬件组成</h5><ul>
 <li><p>总线 （通常总线被设计成传送定长的字节块，其中字节长是一个基本系统参数，比如常用的32位，64位分别对应了4字节长，和8字节长。）</p>
 </li>
-<li><p>I/O设备 （这是一个很广的概念，鼠标，键盘，显示器属于I/O设备，硬盘等也是。一种是本身就在主板上得，一种是适配器插上去的。）</p>
+<li><p>I/O设备 （这是一个很广的概念，鼠标，键盘，显示器属于I/O设备，硬盘等也是。一种是本身就在主板上，一种是适配器插上去。）</p>
 </li>
-<li><p>主存 （也称为内存，是由一组DRAM芯片组成，是一个线性的字节数组，每个字节都有一个唯一的地址，从零开始。一般来说不同的机器每一天机器指令的长度不相同。）</p>
+<li><p>主存 （也称为内存，是由一组DRAM芯片组成，是一个线性的字节数组，每个字节都有一个唯一的地址，从零开始。一般来说不同的机器，指令的长度不相同。）</p>
 </li>
 <li><p>处理器 （CPU，简称处理器，用来执行存储在主存中指令的引擎，由寄存器，程序计数器（PC），算数/逻辑单元（ALU）组成。）</p>
 </li>
 </ul>
-<h3 id="软件运行">软件运行</h3><p>在整个运行期间，先把存放在磁盘上得可执行文件传送到主存（通过直接存储器（DMA）），然后再到寄存器。</p>
-<ol>
-<li>高速缓存的重要性</li>
-</ol>
-<p>前面整个过程可以看出，有大量的时间是用在资源的传输上，于是聪明的系统设计者就在处理器和主存间加入了<code>高速缓存存储器</code>，访问速度几乎和寄存器一样快。L1和L2运用的是一种静态随机访问存储器（SRAM）的硬件技术实现，现在很多还加入了L3缓存。</p>
-<ol>
-<li>存储设备的层级结构</li>
-</ol>
-<p>寄存器 -&gt; L1高速缓存（SRAM） -&gt; L2高速缓存（SRAM） -&gt; L3高速缓存（SRAM） -&gt; 主存（DRAM）-&gt; 本地二级存储（磁盘） -&gt; 远程二级存储（分布式，Web）。</p>
+<h5 id="软件运行">软件运行</h5><p>在整个运行期间，先把存放在磁盘上得可执行文件传送到主存（通过直接存储器（DMA）），然后再到寄存器。</p>
+<h3 id="高速缓存的重要性">高速缓存的重要性</h3><p>前面整个过程可以看出，有大量的时间是用在资源的传输上，于是聪明的系统设计者就在处理器和主存间加入了<code>高速缓存存储器</code>，访问速度几乎和寄存器一样快。L1和L2运用的是一种静态随机访问存储器（SRAM）的硬件技术实现，现在很多还加入了L3缓存。</p>
+<h3 id="存储设备的层级结构">存储设备的层级结构</h3><p>寄存器 -&gt; L1高速缓存（SRAM） -&gt; L2高速缓存（SRAM） -&gt; L3高速缓存（SRAM） -&gt; 主存（DRAM）-&gt; 本地二级存储（磁盘） -&gt; 远程二级存储（分布式，Web）。</p>
 <h2 id="操作系统">操作系统</h2><p>在hello程序中我们并没有直接调用键盘，显示器等，这些其实都是由操作系统完成的，在应用程序和硬件之间。操作系统有两个基本功能：</p>
 <ul>
 <li>防止硬件被滥用。</li>
 <li>向应用提供简单一致的控制硬件机制。</li>
 </ul>
 <p>总的来说，文件是对I/O设备的抽象，虚拟存储器是对主存和磁盘I/O的抽象，进程则是对处理器，主存和磁盘I/O的抽象。</p>
-<ol>
-<li>进程和线程</li>
-</ol>
-<p>进程是操作系统对一个正在运行程序的抽象，无论是在单核，还是多核系统中，一个CPU看上去都像在并发的执行多个进程，这是通过处理器在进程间切换实现的，这种交错机制也称为上下文切换。</p>
+<h3 id="进程和线程">进程和线程</h3><p>进程是操作系统对一个正在运行程序的抽象，无论是在单核，还是多核系统中，一个CPU看上去都像在并发的执行多个进程，这是通过处理器在进程间切换实现的，这种交错机制也称为上下文切换。</p>
 <p>通常情况下一个进程只有单一的控制流，但是现代系统中，一个线程实际上可以由多个线程的执行单元组成，每个线程都运行在进程的上下文中，并共享同样地代码和全局数据。</p>
-<ol>
-<li>虚拟存储器</li>
-</ol>
-<p>这是一个抽象的概念，为进程提供一个假象，好似每个进程都在独占整个主存。每个进程看到的都是一直的存储器，称为虚拟地址空间。</p>
+<h3 id="虚拟存储器">虚拟存储器</h3><p>这是一个抽象的概念，为进程提供一个假象，好似每个进程都在独占整个主存。每个进程看到的都是一致的存储器，称为虚拟地址空间。</p>
 <ul>
 <li>程序代码和数据 （对于所有的进程来说，代码是从一个固定的地址开始的，紧接着是C全局变量相对应的数据位置。</li>
 <li>堆     （运行时使用的堆，代码和数据区在刚开始运行已经被设定好大小，而堆是动态分配的）</li>
@@ -100,33 +75,18 @@
 <li>栈     （位于虚拟地址空间顶部，编译器用来实现函数调用，可以动态扩展和收缩）</li>
 <li>内核虚拟存储器 （内核总是驻留在内存中，顶部空间是为内核预留的）</li>
 </ul>
-<ol>
-<li>文件</li>
-</ol>
-<p>文件就是字节序列，每个I/O设备都看看成文件，向应用程序提供了一个统一的视角。</p>
-<h2 id="重要主题">重要主题</h2><ol>
-<li>网络通信</li>
-</ol>
-<p>前面我们都是孤立的看待系统，分为硬件和软件，实际上在现代系统中已经离不开网络的存在。从一个单独的系统来看，网络可以视为一个I/O设备，通过一个网络适配器，系统可以读取其他机器发来的数据。</p>
-<ol>
-<li><p>并发和并行</p>
-<ul>
-<li><p>线程级并发 （可以使应用程序更快，可以并行地高效执行）</p>
-</li>
-<li><p>指令级并行 （处理器可以同时执行多条指令的属性称为指令级并行）</p>
-</li>
-<li><p>单指令，多数据并行 （允许一条指令产生多个可以并行执行的操作）</p>
-</li>
-</ul>
-</li>
-<li><p>计算机系统中抽象的重要性</p>
-</li>
-</ol>
-<p>无需了解内部实现可以使用，前面介绍了三种抽象，再往外扩展，虚拟机则是对整个计算机（操作系统，处理器，程序）的抽象。</p>
+<h3 id="文件">文件</h3><p>文件就是字节序列，每个I/O设备都可以看成文件，向应用程序提供了一个统一的视角。</p>
+<h2 id="重要主题">重要主题</h2><h3 id="网络通信">网络通信</h3><p>前面我们都是孤立的看待系统，分为硬件和软件，实际上在现代系统中已经离不开网络的存在。从一个单独的系统来看，网络可以视为一个I/O设备，通过一个网络适配器，系统可以读取其他机器发来的数据。</p>
+<h3 id="并发和并行">并发和并行</h3><pre><code>-<span class="ruby"> 线程级并发 （可以使应用程序更快，可以并行地高效执行）
+</span>
+-<span class="ruby"> 指令级并行 （处理器可以同时执行多条指令的属性称为指令级并行）
+</span>
+-<span class="ruby"> 单指令，多数据并行 （允许一条指令产生多个可以并行执行的操作）</span>
+</code></pre><h3 id="计算机系统中抽象的重要性">计算机系统中抽象的重要性</h3><p>无需了解内部实现可以使用，前面介绍了三种抽象，再往外扩展，虚拟机则是对整个计算机（操作系统，处理器，程序）的抽象。</p>
 <h2 id="总结">总结</h2><ol>
 <li><p>计算机系统是由硬件和软件组成，共同协作运行程序，内部信息通过位表示，根据不同的上下文解释不同，经过编译系统翻译成可执行文件。</p>
 </li>
-<li><p>处理器读取并解释在主存中得二进制指令，由于大量时间花费在数据传输中，所以引入缓存机制，存储结构分级。</p>
+<li><p>处理器读取并解释在主存中的二进制指令，由于大量时间花费在数据传输中，所以引入缓存机制，存储结构分级。</p>
 </li>
 <li><p>操作系统内核是应用程序和硬件的媒介，提供了三种抽象：文件，虚拟存储器和进程。</p>
 </li>
@@ -135,16 +95,13 @@
 </ol>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
+    <![CDATA[<p>计算机系统是由硬件+软件构成，共同工作来运行应用程序。这里由一个非常简单的例子入手观察在整个程序生命周期中，计算机系统分别承担了什么样的责任。</p>
 <pre><code><span class="preprocessor">#<span class="keyword">include</span> &lt;stdio,h&gt;</span>
 
 <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>{
     <span class="built_in">printf</span>(<span class="string">"hello, world"</span>);
 }
-</code></pre><h2 id="系统简介">系统简介</h2><ol>
-<li>信息就是位+上下文</li>
-</ol>
-<p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上的，存储器中得，网络中得）都是由一串位表示的，唯一区别只是上下文。</p>]]>
+</code></pre><h2 id="系统简介">系统简介</h2><h3 id="信息就是位+上下文">信息就是位+上下文</h3><p>这是一个很简单的C语言源程序，在计算机系统中，像这样的源程序一般都是由ASCⅡ字符构成，也称为文本文件，其他文件则称为二进制文件。这也透露出来一个基本的理念：系统中所有的信息（磁盘上，存储器中，网络中）都是由一串位表示的，唯一区别只是上下文。</p>]]>
     
     </summary>
     
@@ -159,7 +116,7 @@
     <link href="http://blog.tracyone.com/2015/06/16/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/</id>
     <published>2015-06-16T14:24:52.000Z</published>
-    <updated>2015-06-16T14:27:08.000Z</updated>
+    <updated>2015-06-20T02:57:12.000Z</updated>
     <content type="html"><![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
 <h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
 <pre><code>void
@@ -224,7 +181,7 @@ objc_initWeak(id *addr, id <span class="function"><span class="keyword">val</spa
     <span class="keyword">if</span> (!<span class="function"><span class="keyword">val</span>) <span class="title">return</span> <span class="title">nil</span>;</span>
     <span class="keyword">return</span> objc_storeWeak(addr, <span class="function"><span class="keyword">val</span>);</span>
 }
-</code></pre><p>2.这个函数看上去做了很多事，其实很多都可以略过不看，主要做了通过weak_unregister_no_lock函数把原来的对象unregister，通过weak_register_no_lock函数把新的对象register进去。最后一步就是通过setWeaklyReferenced_nolock函数使得引用计数那张散列表的weak引用对象的引用计数中标示为weak引用。</p>
+</code></pre><p>2.这个函数看上去做了很多事，其实很多都可以略过不看，主要做了通过weak_unregister_no_lock函数把原来的对象unregister，通过weak_register_no_lock函数把新的对象register进去。最后一步就是通过setWeaklyReferenced_nolock函数使得引用计数那张散列表的weak引用对象的引用计数中标识为weak引用。</p>
 <pre><code><span class="function">id
 <span class="title">objc_storeWeak</span><span class="params">(id *location, id newObj)</span>
 </span>{
@@ -350,7 +307,7 @@ objc_loadWeakRetained(id *location)
     <link href="http://blog.tracyone.com/2015/06/15/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%AD/"/>
     <id>http://blog.tracyone.com/2015/06/15/深入浅出ARC-中/</id>
     <published>2015-06-15T14:28:03.000Z</published>
-    <updated>2015-06-16T01:49:57.000Z</updated>
+    <updated>2015-06-20T02:57:16.000Z</updated>
     <content type="html"><![CDATA[<p>这篇主要探究一下dealloc额外做的两三事，autorelease的内幕，以及ARC的使用规则。本来不准备写dealloc和autorelease的，不过昨天在看源码的时候发现还是很有意思的，然后也是为了内存管理的完整性，就顺带着记录下来了。</p>
 <h2 id="dealloc搞得鬼">dealloc搞得鬼</h2><p>上一次看到这里发现了一个objc_destructInstance函数的调用，这次主要就是探究下，这个函数做了什么。<br><a id="more"></a></p>
 <pre><code><span class="function">id 
@@ -389,7 +346,7 @@ objc_loadWeakRetained(id *location)
     <span class="keyword">if</span> <span class="params">(obj-&gt;isTaggedPointer<span class="params">()</span>)</span> return;
     object_cxxDestructFromClass<span class="params">(obj, obj-&gt;ISA<span class="params">()</span>)</span>;
 }
-</code></pre><p>2.这里关键就是取到真正的析构函数，所以用了个函数指针，因为需要做一系列的判断，最后调用</p>
+</code></pre><p>2.这里关键就是取到真正的析构函数，所以用了个函数指针，因为需要做一系列的判断，最后调用lookupMethodInClassAndLoadCache函数。</p>
 <pre><code>static void object_cxxDestructFromClass<span class="params">(id obj, Class cls)</span>
 {
     void <span class="params">(*dtor)</span><span class="params">(id)</span>;
@@ -409,7 +366,7 @@ objc_loadWeakRetained(id *location)
         }
     }
 }
-</code></pre><p>3.这个就是查找析构函数的函数，先从缓存表中找，再从方法列表中找，如果找到还要放到缓存表中，否则的话就调用方法转发，并且缓存起来。</p>
+</code></pre><p>3.这个就是查找析构函数的函数，先从缓存表中找，再从方法列表中找，如果找到还要放到缓存表中，找不到的话就调用方法转发，并且缓存起来。</p>
 <pre><code><span class="type">IMP</span> lookupMethodInClassAndLoadCache(<span class="type">Class</span> cls, <span class="type">SEL</span> sel)
 {
     <span class="type">Method</span> meth;
@@ -470,7 +427,7 @@ objc_loadWeakRetained(id *location)
 {
     <span class="function">sidetable_clearDeallocating</span>()</span></span>;
 }
-</code></pre><p>2.还是取散列表SideTable，遍历是否有weak引用，it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED这里用到的就是前面所说的宏，作用就是标示是否有weak引用。如果有旧调用weak_clear_no_lock这个函数，这个函数中会遍历清除所有weak引用，这就是Objc不需要我们手动清理weak引用的关键点。</p>
+</code></pre><p>2.还是取散列表SideTable，遍历是否有weak引用，it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED这里用到的就是前面所说的宏，作用就是标示是否有weak引用。如果有就调用weak_clear_no_lock这个函数，这个函数中会遍历清除所有weak引用，这就是Objc不需要我们手动清理weak引用的关键点。</p>
 <pre><code><span class="literal">void</span> 
 objc_object<span class="tag">::sidetable_clearDeallocating</span>()
 {
@@ -514,7 +471,7 @@ objc_object::rootAutorelease()
     <span class="function">assert</span>(!<span class="function">isTaggedPointer</span>())</span></span>;
     <span class="tag">return</span> <span class="rule"><span class="attribute">AutoreleasePoolPage</span>:<span class="value">:<span class="function">autorelease</span>((id)this)</span></span>;
 }
-</code></pre><p>4.这两步都是AutoreleasePoolPage的方法，主要就是判断当前page是否已满，如果没有就直接add，如果已经满了则会去重新new一个page，然后c设为当前页，并且添加进去，如果当前没有page，则会初始化第一个page然后添加。</p>
+</code></pre><p>4.这两步都是AutoreleasePoolPage的方法，主要就是判断当前page是否已满，如果没有就直接add，如果已经满了则会去重新new一个page，然后设为当前页，并且添加进去，如果当前没有page，则会初始化第一个page然后添加。</p>
 <pre><code>static inline id autorelease<span class="params">(id obj)</span>
     {
         assert<span class="params">(obj)</span>;
@@ -573,8 +530,8 @@ static inline id <span class="built_in">*</span>autoreleaseFast<span class="para
     <link href="http://blog.tracyone.com/2015/06/14/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8A/"/>
     <id>http://blog.tracyone.com/2015/06/14/深入浅出ARC-上/</id>
     <published>2015-06-14T15:14:12.000Z</published>
-    <updated>2015-06-14T15:22:54.000Z</updated>
-    <content type="html"><![CDATA[<p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+    <updated>2015-06-20T02:57:17.000Z</updated>
+    <content type="html"><![CDATA[<p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。</p>
 <h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
 <ol>
 <li>自己生成的对象，自己持有。</li>
@@ -595,7 +552,7 @@ _objc_rootAlloc(<span class="class"><span class="keyword">Class</span> <span cla
 </span>{
     <span class="keyword">return</span> callAlloc(cls, <span class="keyword">false</span><span class="comment">/*checkNil*/</span>, <span class="keyword">true</span><span class="comment">/*allocWithZone*/</span>);
 }
-</code></pre><p>3.这里调用的代码就变多了，其实大部分都不需要看，关键就在class_createInstance上，这也是真实地创建实例的方法。其他代码主要是</p>
+</code></pre><p>3.这里调用的代码就变多了，其实大部分都不需要看，关键就在class_createInstance上，这也是真实地创建实例的方法。其他代码主要是去判断是否自定义alloc等。</p>
 <pre><code><span class="keyword">static</span> ALWAYS_INLINE <span class="keyword">id</span>
 callAlloc(Class cls, <span class="keyword">bool</span> checkNil, <span class="keyword">bool</span> allocWithZone=<span class="literal">false</span>)
 {
@@ -754,7 +711,7 @@ objc_object::rootRelease<span class="params">()</span>
     <span class="keyword">if</span> <span class="params">(isTaggedPointer<span class="params">()</span>)</span> return <span class="literal">false</span>;
     return sidetable_release<span class="params">(<span class="literal">true</span>)</span>;
 }
-</code></pre><p>3.主要看一下这里，其实加上SIDE_TABLE_RC_ONE这个便宜是为了空出SIDE_TABLE_DEALLOCATING这个标示，上定义大家就能懂了</p>
+</code></pre><p>3.主要看一下这里，其实加上SIDE_TABLE_RC_ONE这个偏移是为了空出SIDE_TABLE_DEALLOCATING这个标示，看下定义大家就能懂了</p>
 <p>// The order of these bits is important.</p>
 <ul>
 <li>#define SIDE_TABLE_WEAKLY_REFERENCED (1UL&lt;&lt;0)</li>
@@ -762,7 +719,7 @@ objc_object::rootRelease<span class="params">()</span>
 <li>#define SIDE_TABLE_RC_ONE            (1UL&lt;&lt;2)  // MSB-ward of deallocating bit</li>
 <li>#define SIDE_TABLE_RC_SHIFT 2</li>
 </ul>
-<p>4.SIDE_TABLE_WEAKLY_REFERENCED是代表了弱引用，SIDE_TABLE_DEALLOCATING代表了需要释放的引用，SIDE_TABLE_RC_ONE这个则是正常的的偏移。值是和SIDE_TABLE_RC_SHIFT偏移一样的。<br>release比retain稍微复杂的地方就是他需要判断最终是否需要调用dealloc，所以多了很多判断和赋值，大概步骤就是1.先遍历变量是否存在，如果不存在就调用dealloc，2.如果存在再判断是否小于SIDE_TABLE_DEALLOCATING，如果成立同1，3.否则就减去一个SIDE_TABLE_RC_ONE4.最后看do_dealloc是否需要调用dealloc。</p>
+<p>4.SIDE_TABLE_WEAKLY_REFERENCED是代表了有弱引用，SIDE_TABLE_DEALLOCATING代表了需要释放的引用，SIDE_TABLE_RC_ONE这个则是正常的的偏移。值是和SIDE_TABLE_RC_SHIFT偏移一样的。<br>release比retain稍微复杂的地方就是他需要判断最终是否需要调用dealloc，所以多了很多判断和赋值，大概步骤就是1.先遍历变量是否存在，如果不存在就调用dealloc，2.如果存在再判断是否小于SIDE_TABLE_DEALLOCATING，如果成立同1，3.否则就减去一个SIDE_TABLE_RC_ONE4.最后看do_dealloc是否需要调用dealloc。</p>
 <pre><code>bool 
 objc_object::sidetable_release<span class="params">(bool performDealloc)</span>
 {
@@ -834,7 +791,7 @@ objc_object::rootDealloc<span class="params">()</span>
 <p>顾名思义，ARC就是交给编译器来管理引用计数，而大家都知道Objc是通过引用计数来管理内存的，也就是说现在的内存管理已经不需要程序员来操心了（大多数情况下）</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我就找。</p>
+    <![CDATA[<p>最近和同事在讨论一个循环引用问题的时候，不经意间讨论到了内存管理的本质到底是什么，于是翻出《Objective-C高级编程》一看，但是发现上面有些问题，可能是比较旧了，苹果有了新的实现，所以拿出Objc源码研究了下，下面是自己研究的内容，如果理解有误，请定要联系我纠正。</p>
 <h3 id="内存管理">内存管理</h3><p>大家都知道，Objc是通过引用计数来管理内存的（Mac除外啊，毕竟处理器牛逼），主要就遵循以下几个原则：</p>
 <ol>
 <li>自己生成的对象，自己持有。</li>
@@ -857,7 +814,7 @@ objc_object::rootDealloc<span class="params">()</span>
     <link href="http://blog.tracyone.com/2015/06/10/Think-in-Block-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/10/Think-in-Block-下/</id>
     <published>2015-06-10T13:28:22.000Z</published>
-    <updated>2015-06-10T13:33:29.000Z</updated>
+    <updated>2015-06-20T02:57:24.000Z</updated>
     <content type="html"><![CDATA[<p>这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。</p>
 <p>在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。</p>
 <h3 id="截获Objc对象">截获Objc对象</h3><p>先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后的代码非常多，不过抽离出来后也很简洁。</p>
@@ -937,13 +894,13 @@ objc_object::rootDealloc<span class="params">()</span>
     <span class="params">(<span class="params">(void <span class="params">(*)</span><span class="params">(__block_impl *, id)</span>)</span><span class="params">(<span class="params">(__block_impl *)</span>blk)</span>-&gt;FuncPtr)</span><span class="params">(<span class="params">(__block_impl *)</span>blk, <span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSObject"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>)</span>;
 
 }
-</code></pre><p>tips：上面这些代码其实和书上的有一定的区别，也即是前面说得，我们的技术在提升，当然苹果没有理由不提升，不管是编译器还是底层实现。其实这里加不加copy都一样，应该是最近ARC的机制有了一点改变，这个后面会出一篇Blog详解。</p>
+</code></pre><p>tips：上面这些代码其实和书上的有一定的区别，也即是前面说得，我们的技术在提升，当然苹果没有理由不提升，不管是编译器还是底层实现。其实这里加不加copy都一样，因为赋值给strong类型的变量会自动copy。</p>
 <h3 id="循环引用">循环引用</h3><p>由于上边所示那样的内存管理机制，当我们截获strong类型的对象时，很容易出现循环引用，但是也不用担心，没必要无时不刻的用一个__weak来避免，盲目地使用只会暴露出并没有深入地理解。</p>
 <p>这里给出三种方法来避免循环引用：</p>
 <ol>
 <li>__weak 修饰符</li>
 </ol>
-<p>通过weak肯定能解除循环引用，但也有缺点，有时候我们会在内部使用strong来保证执行block的时候外部变量不会释放，但这也不能避免在block执行前已经释放了这种情形。</p>
+<p>通过weak肯定能解除循环引用，但也有缺点，有时候我们会在内部使用strong来保证执行block的时候外部变量不会释放，但这也不能避免在block执行前已经释放了的这种情形。</p>
 <pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(^blk_t)();
 <span class="class"><span class="keyword">@interface</span> <span class="title">Block</span> ()</span>
 <span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *array;
@@ -1015,7 +972,7 @@ objc_object::rootDealloc<span class="params">()</span>
     <link href="http://blog.tracyone.com/2015/06/07/Think-in-Block-%E4%B8%8A/"/>
     <id>http://blog.tracyone.com/2015/06/07/Think-in-Block-上/</id>
     <published>2015-06-07T13:14:38.000Z</published>
-    <updated>2015-06-09T13:22:05.000Z</updated>
+    <updated>2015-06-20T02:57:26.000Z</updated>
     <content type="html"><![CDATA[<h2 id="Block_简介">Block 简介</h2><p>这不是一篇介绍如何使用Block的文章，主要想要探究一下系统背后Block发生了什么，主要参考的是《Objective-C高级编程》这本书，不过这本书本身也有些年代了，苹果实现的机制也有了一些改变。实践出真知，不清楚的地方自己动手试一下，会有意外地收获。</p>
 <h3 id="Block是什么">Block是什么</h3><p>苹果官网说法：<br>A block is an anonymous inline collection of code, and sometimes also called a “closure”.</p>
 <p>通俗的讲：<br>闭包就是能够读取其它函数内部变量的匿名函数</p>
@@ -1190,8 +1147,8 @@ __Block_byref_var_0 *__forwarding;
 </code></pre><h3 id="Block,__block存储域">Block,__block存储域</h3><p>Q:Block超出变量作用域可存在？</p>
 <p>A:</p>
 <ol>
-<li>配置在全局变量中得Block，在变量作用域之外也可以通过指针安全的使用</li>
-<li>在栈上得Block则是通过复制到堆上来解决的</li>
+<li>配置在全局变量中的Block，在变量作用域之外也可以通过指针安全的使用</li>
+<li>在栈上的Block则是通过复制到堆上来解决的</li>
 <li>而<strong>block变量用 </strong>forward可以实现无论配置在哪都可以正确地访问 __block变量</li>
 <li>在ARC下，大多数情况下编译器会恰当的判断，自动将Block从栈上复制到堆上。（autorelease）</li>
 </ol>

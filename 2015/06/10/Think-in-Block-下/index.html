@@ -15,7 +15,7 @@
 <meta property="og:description" content="这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。
 在这个过程中也会回答前面留下的坑- -，探究下来感觉，纸上得来终觉浅，以前也看过这本书，但是一直没有动手敲代码，浮于表面了。
 截获Objc对象先看下源程序，声明了一个Block对象，这次用到了copy，然后最后调用了三次，输出的结果是1，2，3。这一次转换后">
-<meta property="og:updated_time" content="2015-06-10T13:33:29.000Z">
+<meta property="og:updated_time" content="2015-06-20T02:57:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Think in Block(下)">
 <meta name="twitter:description" content="这一篇主要浅析下Block和Objc的关系，更加偏向于实际应用。其实大多数时间我们是和Objc对象打交道，知道一点原理，能避免死的不明不白。
@@ -238,13 +238,13 @@
     <span class="params">(<span class="params">(void <span class="params">(*)</span><span class="params">(__block_impl *, id)</span>)</span><span class="params">(<span class="params">(__block_impl *)</span>blk)</span>-&gt;FuncPtr)</span><span class="params">(<span class="params">(__block_impl *)</span>blk, <span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span><span class="params">(<span class="params">(NSObject *<span class="params">(*)</span><span class="params">(id, SEL)</span>)</span><span class="params">(void *)</span>objc_msgSend)</span><span class="params">(<span class="params">(id)</span>objc_getClass<span class="params">(<span class="string">"NSObject"</span>)</span>, sel_registerName<span class="params">(<span class="string">"alloc"</span>)</span>)</span>, sel_registerName<span class="params">(<span class="string">"init"</span>)</span>)</span>)</span>;
 
 }
-</code></pre><p>tips：上面这些代码其实和书上的有一定的区别，也即是前面说得，我们的技术在提升，当然苹果没有理由不提升，不管是编译器还是底层实现。其实这里加不加copy都一样，应该是最近ARC的机制有了一点改变，这个后面会出一篇Blog详解。</p>
+</code></pre><p>tips：上面这些代码其实和书上的有一定的区别，也即是前面说得，我们的技术在提升，当然苹果没有理由不提升，不管是编译器还是底层实现。其实这里加不加copy都一样，因为赋值给strong类型的变量会自动copy。</p>
 <h3 id="循环引用">循环引用</h3><p>由于上边所示那样的内存管理机制，当我们截获strong类型的对象时，很容易出现循环引用，但是也不用担心，没必要无时不刻的用一个__weak来避免，盲目地使用只会暴露出并没有深入地理解。</p>
 <p>这里给出三种方法来避免循环引用：</p>
 <ol>
 <li>__weak 修饰符</li>
 </ol>
-<p>通过weak肯定能解除循环引用，但也有缺点，有时候我们会在内部使用strong来保证执行block的时候外部变量不会释放，但这也不能避免在block执行前已经释放了这种情形。</p>
+<p>通过weak肯定能解除循环引用，但也有缺点，有时候我们会在内部使用strong来保证执行block的时候外部变量不会释放，但这也不能避免在block执行前已经释放了的这种情形。</p>
 <pre><code><span class="keyword">typedef</span> <span class="keyword">void</span>(^blk_t)();
 <span class="class"><span class="keyword">@interface</span> <span class="title">Block</span> ()</span>
 <span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSMutableArray</span> *array;
@@ -301,7 +301,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="cib2c62i3000kdq32vbevzxdj" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/" data-id="cib4fpirf000kmsgnz4wif4t2" class="article-share-link">分享到</a>
       
         <a href="http://blog.tracyone.com/2015/06/10/Think-in-Block-下/#ds-thread" class="article-comment-link">评论</a>
       
