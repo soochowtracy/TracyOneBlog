@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>初探GCD | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="GCD简介GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。
+GCD技能树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探GCD">
+<meta property="og:url" content="http://blog.tracyone.com/2015/06/28/初探GCD/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="GCD简介GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。
+GCD技能树">
+<meta property="og:updated_time" content="2015-06-28T10:11:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初探GCD">
+<meta name="twitter:description" content="GCD简介GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。
+GCD技能树">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?fc6ac8ae95352665bd78e06dd31346e3";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="https://github.com/soochowtracy">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        8
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        5
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-初探GCD" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      初探GCD
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/06/28/初探GCD/">
+    <time datetime="2015-06-28T10:08:41.000Z" itemprop="datePublished">2015-06-28</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="GCD简介">GCD简介</h2><p>GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。</p>
+<h2 id="GCD技能树">GCD技能树</h2><a id="more"></a>
+<h3 id="Dispatch_Queue">Dispatch Queue</h3><p>首先要申明一点，queue不等于线程，多个queue也不代表了多个线程，一个queue也可能对应了多个线程，这里的queue其实是一个存放task的队列，遵循先进先出原则。</p>
+<p>Queue可以分两种，一种是serial，一种concurrent，一个serial队列只有一个线程执行任务，也就是说这是需要等待正在处理的任务结束了CGD才会分发第二个任务进行处理，而concurrent则不一样，它对应了很多个线程（视具体处理器，程序运行情况而定）。</p>
+<h4 id="dispatch_queue_create">dispatch_queue_create</h4><pre><code><span class="built_in">dispatch_queue_t</span> tempQueue = dispatch_queue_create(<span class="string">"com.LY.Test"</span>, <span class="literal">NULL</span>);
+</code></pre><p>通过这种方法可以创建一个队列，通过改变第二个参数，可以指定是serial还是concurrent模式（DISPATCH_QUEUE_CONCURRENT）。还有一点比较好的地方就是ARC后编译器已经可以帮我们管理内存了，也就是把GCD对象看成OC对象了。</p>
+<p>虽然我们可以创建多个serial队列来模拟concurrent队列，不过这会消耗很大的性能，因为每一个serial都会阐述一个线程，必然带来了大量的内存消耗。而concurrent队列则不一样，由系统帮我们觉得是否开辟新线程，还是使用原有的线程。</p>
+<h4 id="Main/Global_Dispatch_Queue">Main/Global Dispatch Queue</h4><pre><code>dispatch_queue_t tempQueue = dispatch_get_main_queue<span class="list">()</span><span class="comment">;</span>
+dispatch_queue_t tempQueue = dispatch_get_global_queue<span class="list">(<span class="keyword">DISPATCH_QUEUE_PRIORITY_HIGH</span>, <span class="number">0</span>)</span><span class="comment">;</span>
+</code></pre><p>第一个队列从名字就能看出来对应了主线程，是一个serial队列。第二个则是一个concurrent队列有四种优先级（DISPATCH_QUEUE_PRIORITY_HIGH, DISPATCH_QUEUE_PRIORITY_DEFAULT,DISPATCH_QUEUE_PRIORITY_LOW,DISPATCH_QUEUE_PRIORITY_BACKGROUND），其实这也只能说是一个大概的优先级区别，并不是说后台队列就只能用在后台。</p>
+<h4 id="dispatch_set_target_queue">dispatch_set_target_queue</h4><p>系统级的队列不需要我们设立优先级，当我们自己创建队列时，默认都是DISPATCH_QUEUE_PRIORITY_DEFAULT级别的。</p>
+<pre><code>dispatch_queue_t tempQueue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test"</span>, NULL)</span><span class="comment">;</span>
+dispatch_queue_t bgQueue = dispatch_get_global_queue<span class="list">(<span class="keyword">DISPATCH_QUEUE_PRIORITY_BACKGROUND</span>, <span class="number">0</span>)</span><span class="comment">;</span>
+dispatch_set_target_queue<span class="list">(<span class="keyword">tempQueue</span>, bgQueue)</span><span class="comment">;</span>
+</code></pre><p>这个函数还有一个作用，能够建立“依赖”，这里的依赖要打个引号，其实只是相当于把多个serial队列的target设为统一serial队列，那么能够起到本来是并发执行的各个serial队列，现在每次只能有一个任务在执行中。</p>
+<pre><code>dispatch_queue_t tempQueue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test"</span>, NULL)</span><span class="comment">;</span>
+dispatch_queue_t temp2Queue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test1"</span>, NULL)</span><span class="comment">;</span>
+dispatch_queue_t temp1Queue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test2"</span>, NULL)</span><span class="comment">;</span>
+dispatch_set_target_queue<span class="list">(<span class="keyword">temp1Queue</span>, tempQueue)</span><span class="comment">;</span>
+dispatch_set_target_queue<span class="list">(<span class="keyword">temp2Queue</span>, tempQueue)</span><span class="comment">;</span>
+
+dispatch_async<span class="list">(<span class="keyword">temp1Queue</span>, ^{
+         NSLog<span class="list">(@<span class="string">"1"</span>)</span><span class="comment">;</span>
+        sleep<span class="list">(<span class="number">3</span>)</span><span class="comment">;</span>
+
+    })</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">temp2Queue</span>, ^{
+        NSLog<span class="list">(@<span class="string">"2"</span>)</span><span class="comment">;</span>
+    })</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">temp1Queue</span>, ^{
+            NSLog<span class="list">(@<span class="string">"3"</span>)</span><span class="comment">;</span>
+        })</span><span class="comment">;</span>
+</code></pre><p>如果没有设置target的话，这里的输出是1 2 3；加了同一个target后就变成1 3 2了。</p>
+<h3 id="Dispatch_组合技">Dispatch 组合技</h3><h3 id="Dispatch_同步/异步">Dispatch 同步/异步</h3><pre><code><span class="built_in">dispatch_sync</span>
+<span class="built_in">dispatch_async</span>
+dispatch_barrier_sync
+dispatch_barrier_async
+</code></pre><p>这里有一个点很重要，同步/异步，阻塞/非阻塞其实是两个概念，一个关注的消息通信机制，一个关注的是程序在等待时的状态。</p>
+<h3 id="Dispatch_Group">Dispatch Group</h3><p>这个用处就多了，最基本的用法，先执行一系列的任务，等这些都执行完了，再执行一个特殊的任务。如果用普通的queue来实现会增加很多不必要的操作。这里用gruop来实现就很简单了。</p>
+<pre><code> dispatch_queue_t queue = dispatch_get_global_queue<span class="list">(<span class="keyword">DISPATCH_QUEUE_PRIORITY_DEFAULT</span>, <span class="number">0</span>)</span><span class="comment">;</span>
+dispatch_group_t group = dispatch_group_create<span class="list">()</span><span class="comment">;</span>
+
+dispatch_group_async<span class="list">(<span class="keyword">group</span>, queue, ^{
+    NSLog<span class="list">(@<span class="string">"1"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_group_async<span class="list">(<span class="keyword">group</span>, queue, ^{
+    NSLog<span class="list">(@<span class="string">"2"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_group_async<span class="list">(<span class="keyword">group</span>, queue, ^{
+    NSLog<span class="list">(@<span class="string">"3"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+
+dispatch_group_notify<span class="list">(<span class="keyword">group</span>, dispatch_get_main_queue<span class="list">()</span>, ^{
+    NSLog<span class="list">(@<span class="string">"main"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+</code></pre><p>这里的执行结果肯定的是main是最后一个打印的。</p>
+<ul>
+<li>这个可以阻塞当前线程直到group中得任务全部执行结束。dispatch_group_wait(group, DISPATCH_TIME_FOREVER);</li>
+<li>这个可以检测当前group是否已经全部执行完。long result = dispatch_group_wait(group, DISPATCH_TIME_NOW);</li>
+</ul>
+<p>通过调节时间可以完成各种花样。</p>
+<h3 id="Dispatch_Barrier">Dispatch Barrier</h3><p>有时候我们想在一个并发队列中存在一个任务以serial的形式执行，这时候我们就需要用到barrier</p>
+<pre><code>dispatch_queue_t queue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test"</span>, DISPATCH_QUEUE_CONCURRENT)</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"1"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"1"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"1"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_barrier_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"barrier"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"2"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+dispatch_async<span class="list">(<span class="keyword">queue</span>, ^{
+    NSLog<span class="list">(@<span class="string">"2"</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+</code></pre><p>不管前面三个什么时候结束，可以肯定的是2 2肯定是在1 1 1 barrier后面出现。</p>
+<h3 id="Dispatch_Semaphore">Dispatch Semaphore</h3><p>这个可以更加精细化的处理并发时的数据不一致问题，从名字上能够看出来这是通过信号来处理的，只有在信号大于0的时候不需要等待。</p>
+<pre><code>  dispatch_queue_t queue = dispatch_get_global_queue<span class="params">(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>)</span>;
+dispatch_semaphore_t semaphore = dispatch_semaphore_create<span class="params">(<span class="number">1</span>)</span>;
+NSMutableArray <span class="built_in">*</span>arr = [NSMutableArray array];
+
+<span class="keyword">for</span> <span class="params">(int i=<span class="number">0</span>; i &lt; <span class="number">10000</span>; i++)</span> {
+    dispatch_async<span class="params">(queue, ^{
+        dispatch_semaphore_wait<span class="params">(semaphore, DISPATCH_TIME_FOREVER)</span>;
+
+        [arr addObject:@<span class="params">(i)</span>];
+
+        dispatch_semaphore_signal<span class="params">(semaphore)</span>;
+    })</span>;
+}
+
+<span class="keyword">for</span> <span class="params">(NSNumber *n in arr)</span> {
+    NSLog<span class="params">(@<span class="string">"%@"</span>, n)</span>;
+}
+</code></pre><p>结果是从0-9999按序输出，用法：先创建一个semaphore，然后通过dispatch_semaphore_wait来判断是否需要等待，等待多长时间，通过dispatch_semaphore_signal这个函数来给计数加1.</p>
+<h3 id="Dispatch小技巧">Dispatch小技巧</h3><h4 id="dispatch_after">dispatch_after</h4><p>这个就比较简单了，其实就是延时用dispatch_async添加到队列中,不会阻塞当前线程。</p>
+<pre><code>dispatch_time_t time = dispatch_time<span class="params">(DISPATCH_TIME_NOW, <span class="params">(int64_t)</span><span class="params">(<span class="number">2</span>ull * NSEC_PER_SEC)</span>)</span>;
+dispatch_after<span class="params">(time, dispatch_get_main_queue<span class="params">()</span>, ^{
+    NSLog<span class="params">(@<span class="string">"deley"</span>)</span>;
+})</span>;
+</code></pre><h4 id="dispatch_apply">dispatch_apply</h4><p>这个可以解决单次循环比较耗时的问题。配合async使用效果更加。</p>
+<pre><code>dispatch_queue_t queue = dispatch_queue_create<span class="list">(<span class="string">"com.LY.test"</span>, DISPATCH_QUEUE_CONCURRENT)</span><span class="comment">;</span>
+dispatch_apply<span class="list">(<span class="number">10</span>, queue, ^<span class="list">(<span class="keyword">size_t</span> <span class="literal">t</span>)</span> {
+    NSLog<span class="list">(@<span class="string">"%@"</span> , @<span class="list">(<span class="keyword">t</span>)</span>)</span><span class="comment">;</span>
+})</span><span class="comment">;</span>
+</code></pre><h4 id="dispatch_suspend/resume">dispatch_suspend/resume</h4><p>这个从字面上就能看出，一个是挂起队列，一个是重新开始执行，需要注意的是已经在执行的任务是无法挂起的。</p>
+<h2 id="GCD实现&amp;&amp;总结">GCD实现&amp;&amp;总结</h2><p>GCD虽然源码已经放出来了，不过从中可以看出，苹果用了很多手法来反编译，全是混淆，也导致阅读难度大量增加。</p>
+<p>总的来说，Dispatch Queue主要用到<a href="http://opensource.apple.com/source/libdispatch/" target="_blank" rel="external">libdispatch</a>，Libc，以及XNU内核中得workqueue。而我们作为一个普通开发所使用的大多都在libdispatch中。</p>
+<p>大致的原理是，通过结构体和链表实现FIFO队列，然后其他函数辅助，其中Block不是直接加入队列，中间会转一层。</p>
+<p>具体的源码解析，还有dispatch的source放到以后再说，这次主要记录一下整个dispatch的基本使用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/06/28/初探GCD/" data-id="cibgbdh0p0001eg32chj1y2o8" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/06/28/初探GCD/#ds-thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GCD/">GCD</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/06/22/iOS开发应该知道的HTTP/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">iOS开发应该知道的HTTP</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/06/28/初探GCD/" data-title="初探GCD" data-url="http://blog.tracyone.com/2015/06/28/初探GCD/">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by DuoShuo.</a></noscript>
+      </div>
+  </section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/28/初探GCD/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/28/初探GCD/" class="title">初探GCD</a></p>
+              <p class="item-date"><time datetime="2015-06-28T10:08:41.000Z" itemprop="datePublished">2015-06-28</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/22/iOS开发应该知道的HTTP/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/Computer-Networks/">Computer Networks</a></p>
+              <p class="item-title"><a href="/2015/06/22/iOS开发应该知道的HTTP/" class="title">iOS开发应该知道的HTTP</a></p>
+              <p class="item-date"><time datetime="2015-06-22T05:50:57.000Z" itemprop="datePublished">2015-06-22</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/Computer-System/">Computer System</a></p>
+              <p class="item-title"><a href="/2015/06/18/iOS菜鸟的CS之路（计算机系统漫游）/" class="title">iOS菜鸟的CS之路（计算机系统漫游）</a></p>
+              <p class="item-date"><time datetime="2015-06-18T15:08:16.000Z" itemprop="datePublished">2015-06-18</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/16/深入浅出ARC-下/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/16/深入浅出ARC-下/" class="title">深入浅出ARC(下)</a></p>
+              <p class="item-date"><time datetime="2015-06-16T14:24:52.000Z" itemprop="datePublished">2015-06-16</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/06/15/深入浅出ARC-中/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/06/15/深入浅出ARC-中/" class="title">深入浅出ARC(中)</a></p>
+              <p class="item-date"><time datetime="2015-06-15T14:28:03.000Z" itemprop="datePublished">2015-06-15</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Computer-Networks/">Computer Networks</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Computer-System/">Computer System</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS/">CS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCD/">GCD</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ARC/" style="font-size: 20px;">ARC</a> <a href="/tags/CS/" style="font-size: 10px;">CS</a> <a href="/tags/GCD/" style="font-size: 10px;">GCD</a> <a href="/tags/block/" style="font-size: 15px;">block</a> <a href="/tags/http/" style="font-size: 10px;">http</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tracy-one"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
