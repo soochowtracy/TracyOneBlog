@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-07-01T02:37:54.000Z</updated>
+  <updated>2015-07-01T15:04:20.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,139 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[一步一脚印封装CoreData]]></title>
+    <link href="http://blog.tracyone.com/2015/07/01/%E4%B8%80%E6%AD%A5%E4%B8%80%E8%84%9A%E5%8D%B0%E5%B0%81%E8%A3%85CoreData/"/>
+    <id>http://blog.tracyone.com/2015/07/01/一步一脚印封装CoreData/</id>
+    <published>2015-07-01T15:03:13.000Z</published>
+    <updated>2015-07-01T15:04:20.000Z</updated>
+    <content type="html"><![CDATA[<p>CoreData是一种非常灵活地数据管理方式，它既不是一种O/RM也不是一个单纯地SQL wrapper，但是却有这两者的有点，也就是说你既可以把它用作对象关系映射，也可以简化数据库的操作。那么要熟练地使用coredata我们需要掌握哪些姿势呢？</p>
+<p>整个coredata技术栈中从上游到下游大致有这些技术：</p>
+<p>上层：NSManagedObject，NSEntityDescription，NSFetchRequest，NSPredicate，NSSortDescriptors</p>
+<p>中层：NSManagedObjectContext，NSManagedObjectModel，NSPersistentStoreCoordinator</p>
+<p>底层：NSPersistentStore，SQLite，NSFileManager</p>
+<p>那么我们就可以按照这样的分层来组织我们的架构。代码可以在<a href="https://github.com/soochowtracy/TCTCoreData" target="_blank" rel="external">这里</a>下到</p>
+<a id="more"></a>
+<h3 id="TCTCoredata">TCTCoredata</h3><p>在这个架构模型当中最关键的就是位于中间这一层的对象。他们起到了呈上启下的作用，所以很明显我们需要封装一个类用来沟通系统暴露出来的接口和需要给上层提供的功能。</p>
+<pre><code><span class="class"><span class="keyword">@interface</span> <span class="title">TCTCoreData</span> : <span class="title">NSObject</span></span>
+
++ (instancetype)defaultCoreData;
+
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *modelName;
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>) <span class="built_in">NSString</span> *storeFileName;
+<span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) TCTCoreDataStoreType storeType;
+
+<span class="keyword">@property</span> (<span class="keyword">readonly</span>, <span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSManagedObjectContext</span> *managedObjectMainContext;
+
+<span class="keyword">@end</span>
+</code></pre><p>接口这边的内容很简单就是context和全局的一个单例对象，支持一些自定义（model的名字，存储文件的名字等），其实整个这一层给上层提供的就是context这个容器。</p>
+<pre><code>- (<span class="built_in">NSManagedObjectContext</span> *)managedObjectMainContext{
+    <span class="keyword">if</span> (_managedObjectMainContext) {
+        <span class="keyword">return</span> _managedObjectMainContext;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">self</span><span class="variable">.persistentStoreCoordinator</span>) {
+        _managedObjectMainContext = [[<span class="built_in">NSManagedObjectContext</span> alloc] initWithConcurrencyType:<span class="built_in">NSMainQueueConcurrencyType</span>];
+        [_managedObjectMainContext setPersistentStoreCoordinator:<span class="keyword">self</span><span class="variable">.persistentStoreCoordinator</span>];
+    }
+    <span class="keyword">return</span> _managedObjectMainContext;
+}
+
+- (<span class="built_in">NSPersistentStoreCoordinator</span> *)persistentStoreCoordinator{
+    <span class="keyword">if</span> (_persistentStoreCoordinator) {
+        <span class="keyword">return</span> _persistentStoreCoordinator;
+    }
+
+    _persistentStoreCoordinator = [[<span class="built_in">NSPersistentStoreCoordinator</span> alloc] initWithManagedObjectModel:<span class="keyword">self</span><span class="variable">.managedObjectModel</span>];
+
+    <span class="built_in">NSDictionary</span> *options = @{ <span class="built_in">NSMigratePersistentStoresAutomaticallyOption</span>: @YES,
+                               <span class="built_in">NSInferMappingModelAutomaticallyOption</span>: @YES };
+
+
+    <span class="built_in">NSURL</span> *fileURL = [[[<span class="keyword">self</span> applicationDocumentsDirectory] URLByAppendingPathComponent:<span class="keyword">self</span><span class="variable">.storeFileName</span>] URLByAppendingPathExtension:TCT_FileNameExtension(<span class="keyword">self</span><span class="variable">.storeType</span>)];
+    <span class="built_in">NSFileManager</span> *fileManager = [<span class="built_in">NSFileManager</span> defaultManager];
+
+    <span class="keyword">if</span> (![fileManager fileExistsAtPath:[fileURL path]]) {
+        <span class="built_in">NSURL</span> *storeURL = [<span class="keyword">self</span> URLOfFileName:<span class="keyword">self</span><span class="variable">.storeFileName</span> withExtension:TCT_FileNameExtension(<span class="keyword">self</span><span class="variable">.storeType</span>)];
+        <span class="keyword">if</span> (storeURL) {
+            [fileManager copyItemAtURL:storeURL toURL:fileURL error:<span class="literal">NULL</span>];
+        }
+    }
+
+    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;
+    <span class="keyword">if</span> (![_persistentStoreCoordinator addPersistentStoreWithType:TCT_StoreType(<span class="keyword">self</span><span class="variable">.storeType</span>) configuration:<span class="literal">nil</span> URL:fileURL options:options error:&amp;error]) {
+<span class="preprocessor">#if DEBUG</span>
+        [<span class="keyword">self</span> dealWithLinkStoreError:error];
+<span class="preprocessor">#endif</span>
+    }
+
+    <span class="keyword">return</span> _persistentStoreCoordinator;
+}
+
+- (<span class="built_in">NSManagedObjectModel</span> *)managedObjectModel {
+    <span class="keyword">if</span> (_managedObjectModel) {
+        <span class="keyword">return</span> _managedObjectModel;
+    }
+
+    <span class="built_in">NSURL</span> *modelURL = [<span class="keyword">self</span> URLOfFileName:<span class="keyword">self</span><span class="variable">.modelName</span> withExtension:kModelNameExtension];
+
+    _managedObjectModel = [[<span class="built_in">NSManagedObjectModel</span> alloc] initWithContentsOfURL:modelURL];
+
+    <span class="keyword">return</span> _managedObjectModel;
+}
+</code></pre><p>具体的实现也很简单，主要就是从上而下的创建context，persistent和model。然后在这期间会运用到一些策略，比如说，自动升级，从bundle中拷贝sqlite文件等，主要是这一期是简单的封装，所以像数据库迁移，多context策略都没有写入。这个在后续版本迭代中会陆续改进。</p>
+<p>在这个coredata栈建立中，还连接下层的：NSPersistentStore，SQLite，NSFileManager等，达到一个数据持久化的策略。</p>
+<h3 id="TCTDatabaseHelper">TCTDatabaseHelper</h3><p>这一层就对应了上层的内容，对上层的内容做了简单地封装，本来是准备把NSPredicate和NSSortDescriptors封装进去的，后来考虑到这不是一个简单sql wrapper，所以觉得通过category来单独封装。</p>
+<pre><code>+ (<span class="tag">void</span>)<span class="rule"><span class="attribute">configureDatabaseWithSetting</span>:<span class="value">(TCTDatabaseSettingsBlock)setting</span></span>;
+
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">searchAllModelsWithEntityName</span>:<span class="value">(NSString *)entityName</span></span>;
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">searchModelsWithEntityName</span>:<span class="value">(NSString *)entityName predicate:(NSPredicate *)predicate sorts:(NSArray *)sorts</span></span>;
+
++ (<span class="tag">void</span>)<span class="rule"><span class="attribute">deleteAllModels</span>:<span class="value">(NSArray *)models</span></span>;
++ (<span class="tag">id</span>)<span class="rule"><span class="attribute">createModelWithEntityName</span>:<span class="value">(NSString *)entityName</span></span>;
++ (<span class="tag">BOOL</span>)<span class="tag">saveContext</span>;
+</code></pre><p>除了第一个方法是用来对coredata配置外，其余均是用于对使用者提供的功能支持。其实对于使用方来说无非就是增删改查，怎么方便怎么来。然后又要结合对象管理，所以这里提供了增删查（在对象管理中，改需要先查出来后，修改对象属性，最后保存即可）。</p>
+<pre><code>+ (<span class="built_in">NSArray</span> *)searchModelsWithEntityName:(<span class="built_in">NSString</span> *)entityName predicate:(<span class="built_in">NSPredicate</span> *)predicate sorts:(<span class="built_in">NSArray</span> *)sorts{
+    <span class="built_in">NSFetchRequest</span> *request = [[<span class="built_in">NSFetchRequest</span> alloc] initWithEntityName:entityName];
+    request<span class="variable">.predicate</span> = predicate;
+    request<span class="variable">.sortDescriptors</span> = sorts;
+
+    <span class="built_in">NSError</span> *error;
+    <span class="built_in">NSArray</span>* objects = [[TCTCoreData defaultCoreData]<span class="variable">.managedObjectMainContext</span> executeFetchRequest:request error:&amp;error];
+
+    <span class="keyword">if</span> (!objects) {
+        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, error<span class="variable">.description</span>);
+    }
+    <span class="keyword">return</span> objects;
+
+}
+</code></pre><p>主要就是对fetch的组装，非常简洁，也为后续的扩展提供了可能性。那么到这里coredata的最基本封装要告一段落了，在这个过程中主要用到了NSManagedObject，NSEntityDescription，NSFetchRequest，NSManagedObjectContext，NSManagedObjectModel，NSPersistentStoreCoordinator，NSPersistentStore，SQLite，NSFileManager。后期的方向其实还有很多。</p>
+<h3 id="下个版本迭代">下个版本迭代</h3><h5 id="异步中得数据库">异步中得数据库</h5><p>到现在为止，这个版本只能够在一个线程中访问，数据量大得情况下会卡主线程，按照我们老大的话来讲就是先等数据出来后再接入异步，程序总是在迭代中完善的。会用到的技术主要集中在contex中，主要用的策略还是单一Coordinator多context。</p>
+<h5 id="更加复杂的版本升级">更加复杂的版本升级</h5><p>现在自动升级能够应对绝大多数情况，然而如果修改了entity结构，那么需要更加精准的映射，就需要引入NSMigrationManager，NSMappingModel，NSEntityMapping等类来辅助完成了。</p>
+<h5 id="多样化的存储结构以及多个coredata的使用">多样化的存储结构以及多个coredata的使用</h5><p>当数据量达到一定级别后，当程序功能扩展后，为了逻辑上的清晰，工程的拆分，可能会在一个app中引入多个coredata，以及用不同的存储结构来持久化数据。</p>
+<h3 id="总结">总结</h3><p>在整个coredata的封装过程中其实面临了两个个核心问题：</p>
+<ol>
+<li>是否要封装成一个大而全的工具？</li>
+<li>是做一个中央管理式的工具，还是以实体对象来分散管理的数据库工具？</li>
+</ol>
+<p>没有哪种方案是绝对的好坏，至少在现在这个节点上，用最少的投入带来最大的产出是比较有利的，同时也希望这个库能够越来越完善，把该有的NSPredicate，NSSortDescriptors便捷方法补全等。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>CoreData是一种非常灵活地数据管理方式，它既不是一种O/RM也不是一个单纯地SQL wrapper，但是却有这两者的有点，也就是说你既可以把它用作对象关系映射，也可以简化数据库的操作。那么要熟练地使用coredata我们需要掌握哪些姿势呢？</p>
+<p>整个coredata技术栈中从上游到下游大致有这些技术：</p>
+<p>上层：NSManagedObject，NSEntityDescription，NSFetchRequest，NSPredicate，NSSortDescriptors</p>
+<p>中层：NSManagedObjectContext，NSManagedObjectModel，NSPersistentStoreCoordinator</p>
+<p>底层：NSPersistentStore，SQLite，NSFileManager</p>
+<p>那么我们就可以按照这样的分层来组织我们的架构。代码可以在<a href="https://github.com/soochowtracy/TCTCoreData">这里</a>下到</p>]]>
+    
+    </summary>
+    
+      <category term="CoreData" scheme="http://blog.tracyone.com/tags/CoreData/"/>
+    
+      <category term="iOS" scheme="http://blog.tracyone.com/categories/iOS/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[算法的思路]]></title>
@@ -151,7 +284,7 @@
     <link href="http://blog.tracyone.com/2015/06/28/%E5%88%9D%E6%8E%A2GCD/"/>
     <id>http://blog.tracyone.com/2015/06/28/初探GCD/</id>
     <published>2015-06-28T10:08:41.000Z</published>
-    <updated>2015-06-28T10:11:00.000Z</updated>
+    <updated>2015-06-28T10:11:05.000Z</updated>
     <content type="html"><![CDATA[<h2 id="GCD简介">GCD简介</h2><p>GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。</p>
 <h2 id="GCD技能树">GCD技能树</h2><a id="more"></a>
 <h3 id="Dispatch_Queue">Dispatch Queue</h3><p>首先要申明一点，queue不等于线程，多个queue也不代表了多个线程，一个queue也可能对应了多个线程，这里的queue其实是一个存放task的队列，遵循先进先出原则。</p>
@@ -550,7 +683,7 @@ dispatch_apply<span class="list">(<span class="number">10</span>, queue, ^<span 
     <link href="http://blog.tracyone.com/2015/06/16/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/</id>
     <published>2015-06-16T14:24:52.000Z</published>
-    <updated>2015-06-20T02:56:36.000Z</updated>
+    <updated>2015-06-20T02:57:12.000Z</updated>
     <content type="html"><![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
 <h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
 <pre><code>void
