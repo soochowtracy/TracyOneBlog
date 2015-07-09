@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-07-01T15:04:20.000Z</updated>
+  <updated>2015-07-09T12:21:21.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,113 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Effective Obj-C <一>]]></title>
+    <link href="http://blog.tracyone.com/2015/07/08/Effective-Obj-C-%E4%B8%80/"/>
+    <id>http://blog.tracyone.com/2015/07/08/Effective-Obj-C-一/</id>
+    <published>2015-07-08T12:31:36.000Z</published>
+    <updated>2015-07-09T12:21:21.000Z</updated>
+    <content type="html"><![CDATA[<p>其实很久以前就看过这本书了，在实践的过程中也不断的遵循着这些tips，不过随着时间的推移，苹果又加入了一些新元素，所以记录下来，不断的更新，完善这些iOS开发中需要注意的点。</p>
+<h3 id="熟悉的Obj-C">熟悉的Obj-C</h3><p>这是一门很古老的语言了，古老到苹果已经推出新的语言来代替了，然而这也不能阻止我依然喜欢这门语言，虽然它还有很多缺陷，但也能看出苹果在不断的完善中。</p>
+<a id="more"></a>
+<h4 id="了解Obj-C的起源">了解Obj-C的起源</h4><p>和普通面向对象语言最大的区别是，消息发送和函数调用的区别，前者依托于运行时环境，而后者在编译期已经确定。</p>
+<h4 id="类的头文件越简洁越好">类的头文件越简洁越好</h4><p>可以使用@class来取代import，然后在真正需要的地方使用import，还可以使用@import来引入模块，减少编译时间和引用泛滥。</p>
+<p>协议尽量单独文件以减少不必要的引入，如果是类似于delegate的协议则可以放在同一个头文件，如果是实现这类协议可以放到类扩展中。</p>
+<h4 id="便捷的字面量">便捷的字面量</h4><p>字面量能够极大的简化，而且可读性还增加了。</p>
+<pre><code>NSNumber <span class="keyword">*</span>intNumber = <span class="comment">@1;</span>
+NSNumber <span class="keyword">*</span>floatNumber = <span class="comment">@1.1;</span>
+NSNumber <span class="keyword">*</span>boolNumber = <span class="comment">@YES;</span>
+NSNumber <span class="keyword">*</span>charNumber = <span class="comment">@'a';</span>
+NSInteger number = 1;
+NSNumber <span class="keyword">*</span>expressionNumber = <span class="comment">@(number);</span>
+</code></pre><p>包括NSString,NSArray,NSDictionary都有这样的便捷写法，然而除了NSString可以用这种字面量来申明成静态变量，其他都不行，会报错</p>
+<blockquote>
+<p>initializer element is not a compile-time constant</p>
+</blockquote>
+<p>原因是这只是个让程序员方便的语法糖而已，能让我们创建一个 autoreleased的对象。</p>
+<h4 id="慎用#define">慎用#define</h4><p>原因很简单，没有编译器检查，值可以更改而不提示。在实现文件中可以用static const，在头文件则可以使用extern。</p>
+<p>需要注意的是，在头文件中的会注册到全局符号表，最好加上特殊前缀，避免重复。</p>
+<h4 id="用枚举，而不是Bool">用枚举，而不是Bool</h4><p>记得曾经看着代码中一个个Bool变量，千万只草泥马飞奔而过，完全不知道该如何去理清逻辑，而枚举值可以比较清晰的表明不同状态。</p>
+<p>现代Obj-C中尽量用NS_ENUM和NS_OPTIONS取代enum，前者可以方便的指定类型，后者可以用在一些条件是组合类型的情况。</p>
+<pre><code><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, MyEnum) {
+    &lt;<span class="preprocessor">#MyEnumValueA#&gt;,</span>
+    &lt;<span class="preprocessor">#MyEnumValueB#&gt;,</span>
+    &lt;<span class="preprocessor">#MyEnumValueC#&gt;,</span>
+};
+
+<span class="keyword">typedef</span> <span class="built_in">NS_OPTIONS</span>(<span class="built_in">NSUInteger</span>, &lt;<span class="preprocessor">#MyEnum#&gt;) {</span>
+    &lt;<span class="preprocessor">#MyEnumValueA#&gt; = 1 <span class="title">&lt;&lt; 0,
+    &lt;#MyEnumValueB#&gt;</span> = 1 <span class="title">&lt;&lt; 1,
+    &lt;#MyEnumValueC#&gt;</span> = 1 <span class="title">&lt;&lt; 2,
+};</span></span>
+</code></pre><p>最后一点就是和switch搭配使用的时候，不要加default分支。</p>
+<h4 id="New_in_iOS7">New in iOS7</h4><p>1.instancetype<br>这个基本在现代话Obj-C中都改过来了，之前都是返回id，然而编译器并不能识别，不能够很好的提示，所以建议以后的初始化方法返回都用这个。</p>
+<p>2.Modules</p>
+<p>这个也是个好东西，可能你还没有使用，但其实编译器已经帮你优化了。PCH是曾经用来解决多出引用相同的模块，然而太容易被滥用了，最终的结果就是所有的文件引用都塞进去。</p>
+<p>所以引入了module，在编译的时候加入一个Modules列表。如果在编译的文件中引用到某个Modules的话，先在这个列表内找，找到就用，如果没找到，则把该文件加入到这个表中。</p>
+<h4 id="New_in_iOS9">New in iOS9</h4><p>1.Nullability</p>
+<p>我觉得主要用在规范上，和下面说的范型是一样一样的，可以用来保证使用方按照我的节奏返回非空数值。</p>
+<p>2.范型</p>
+<p>Obj-C中两个让我头疼的点终于解决了一个，范型也是用在protocol中比较方便，约定好了数据，再也不用担心使用者乱来。</p>
+<p>3.__kindof</p>
+<p>还是用在协议中比较好，再也不需要用一个id来表示一类返回值了。</p>
+<h3 id="对象，消息和运行时">对象，消息和运行时</h3><p>这一节个人感觉是iOS开发必须要掌握的，深入的理解Obj-C的对象和消息，掌握runtime才能写出高效的代码。正是有了运行时，让Obj-C和其他编译型语言有了很大的区别，当然也带了一些弊端（高效的内联函数，强类型检查等），不过总体来说给开发者带来了多元化的选择。</p>
+<h4 id="属性究竟是什么鬼">属性究竟是什么鬼</h4><p>很长一段时间，其实我也没搞清楚属性究竟是干嘛的，直到有一天，我在protocol中定义了属性后，终于发现其实属性只是一种便捷方式。便捷的合成set，get方法，便捷的生产实例变量。</p>
+<p>外部总应该通过属性来访问内部的数据，起到了一层过滤，保护的作用。同时属性还能附带很多特性（原子性，读写权等），熟练的使用属性能够方便的操作数据。</p>
+<h4 id="属性Or实例变量">属性Or实例变量</h4><p>我个人是偏好使用属性的，但是在最近的使用过程中发现，有时候使用属性是有可能产生问题的，比如在继承关系中，比如在accessor方法中还有一些特殊的操作。</p>
+<p>现在，在更多的内部使用中，我倾向于直接用实例变量，可以省去一步消息发送，减少内存管理时带来的负担（如果需要KVO或者懒加载则还是使用属性）。</p>
+<h4 id="坑爹的对象比较">坑爹的对象比较</h4><p>由于Obj-C中不能操作符重载，所以对象的==比较其实比较的是指针值，经常出现的情况就是同样的NSString，然而比较下来并不相同。</p>
+<p>所以Obj-C提供了一个方法来解决这个问题，isEqual。需要注意的是isEqual判定相等的两个对象hash值也必须相等，但是反过来却不是必要的。</p>
+<h4 id="class_cluster">class cluster</h4><p>这个在Obj-C中很常见，大体上可以用工厂来实现，主要用于隐藏具体的细节，而又不想暴露不同的子类。在类别判断的时候尤其要小心，建议用category来扩展系统的class cluster，而不是继承。</p>
+<h4 id="category中的“属性”">category中的“属性”</h4><p>有时候想给一个私有类添加属性并不一定要通过继承来实现，基于Obj-C的runtime机制，我们可以动态的给类添加“属性”。</p>
+<pre><code>static char <span class="built_in">String</span>;
+<span class="subst">-</span> (<span class="literal">void</span>)setString:(NSString <span class="subst">*</span>)<span class="built_in">string</span>{
+    objc_setAssociatedObject(<span class="built_in">self</span>, <span class="subst">&amp;</span><span class="built_in">String</span>, <span class="built_in">string</span>, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+<span class="subst">-</span> (NSString <span class="subst">*</span>)<span class="built_in">string</span>{
+    <span class="keyword">return</span> objc_getAssociatedObject(<span class="built_in">self</span>, <span class="subst">&amp;</span><span class="built_in">String</span>);
+}
+</code></pre><p>关联对象很方便，但是却不推荐用，关联对象的清理等问题需要有一定的底层知识才能够理解的，而且不利于问题排查。</p>
+<h4 id="消息发送和转发">消息发送和转发</h4><p>objc_msgSend这个函数虽然不常用，但其实无时不刻不在使用中，整个Obj-C的方法调用都是基于这个函数，区别于C语言的函数静态绑定，Obj-C可以推迟到运行时才决定方法调用（消息发送）。</p>
+<p>当对象无法响应该消息时，就要用到消息转发机制了，分为两步：</p>
+<p>1.动态添加方法</p>
+<blockquote>
+<p>+(BOOL)resolveInstanceMethod:(SEL)sel<br>+(BOOL)resolveClassMethod:(SEL)sel</p>
+</blockquote>
+<p>这两个方法会在第一时间被调用，在里面可以做很多小动作，比如说动态的添加方法。可以实现类似coredata的dynamic属性的accessor方法。</p>
+<p>到这一步如果还不能响应，那么这个对象就会找备胎了。</p>
+<blockquote>
+<p>-(id)forwardingTargetForSelector:(SEL)aSelector</p>
+</blockquote>
+<p>通过这个返回值可以把消息转发给相应的对象，可以实现模拟多继承。</p>
+<p>2.完整的消息转发</p>
+<p>如果前面这些步骤都没能解决，那最后Obj-C就要寄出大招了，完整的消息转发</p>
+<blockquote>
+<p>-(void)forwardInvocation:(NSInvocation *)anInvocation;</p>
+</blockquote>
+<p>最后实在没辙就只能发给这个，系统默认是会抛出异常。</p>
+<blockquote>
+<p>-(void)doesNotRecognizeSelector:(SEL)aSelector;</p>
+</blockquote>
+<h4 id="method_swizzling">method swizzling</h4><p>这个技术其实很有用，不仅仅是在动态改变系统方法的实现，还可以完成AOP编程。</p>
+<p>具体使用无非就是靠method_exchangeImplementaions来起到方法的实现互换。用在调试上比较方便，省去了在每个地方都写NSLog。</p>
+<h4 id="类对象">类对象</h4><p>首先需要明确的一点就是Obj-C是一门动态语言，其次它也是一门依托于对象的语言。所以在Obj-C中类也是对象。</p>
+<p>每个对象都有一个isa指针指向所属的类，为了形成完整的闭环，NSObject的metaclass的isa指向的是自己。</p>
+<p>如果对象类型无法在编译器确定（id类型），那么可以通过内省来严格判断，并且尽量使用这样的方式而不是用==。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>其实很久以前就看过这本书了，在实践的过程中也不断的遵循着这些tips，不过随着时间的推移，苹果又加入了一些新元素，所以记录下来，不断的更新，完善这些iOS开发中需要注意的点。</p>
+<h3 id="熟悉的Obj-C">熟悉的Obj-C</h3><p>这是一门很古老的语言了，古老到苹果已经推出新的语言来代替了，然而这也不能阻止我依然喜欢这门语言，虽然它还有很多缺陷，但也能看出苹果在不断的完善中。</p>]]>
+    
+    </summary>
+    
+      <category term="effective" scheme="http://blog.tracyone.com/tags/effective/"/>
+    
+      <category term="iOS" scheme="http://blog.tracyone.com/categories/iOS/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[一步一脚印封装CoreData]]></title>
