@@ -391,7 +391,7 @@ NSNumber <span class="keyword">*</span>expressionNumber = <span class="comment">
     <link href="http://blog.tracyone.com/2015/06/28/%E5%88%9D%E6%8E%A2GCD/"/>
     <id>http://blog.tracyone.com/2015/06/28/初探GCD/</id>
     <published>2015-06-28T10:08:41.000Z</published>
-    <updated>2015-06-28T10:11:05.000Z</updated>
+    <updated>2015-06-28T10:11:00.000Z</updated>
     <content type="html"><![CDATA[<h2 id="GCD简介">GCD简介</h2><p>GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。</p>
 <h2 id="GCD技能树">GCD技能树</h2><a id="more"></a>
 <h3 id="Dispatch_Queue">Dispatch Queue</h3><p>首先要申明一点，queue不等于线程，多个queue也不代表了多个线程，一个queue也可能对应了多个线程，这里的queue其实是一个存放task的队列，遵循先进先出原则。</p>
@@ -790,7 +790,7 @@ dispatch_apply<span class="list">(<span class="number">10</span>, queue, ^<span 
     <link href="http://blog.tracyone.com/2015/06/16/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/</id>
     <published>2015-06-16T14:24:52.000Z</published>
-    <updated>2015-06-20T02:57:12.000Z</updated>
+    <updated>2015-06-20T02:56:36.000Z</updated>
     <content type="html"><![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
 <h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
 <pre><code>void
