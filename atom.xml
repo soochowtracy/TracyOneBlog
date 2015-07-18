@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-07-09T12:21:21.000Z</updated>
+  <updated>2015-07-18T09:37:11.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,103 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Effective Obj-C <二>]]></title>
+    <link href="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-%E4%BA%8C/"/>
+    <id>http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/</id>
+    <published>2015-07-18T09:36:17.000Z</published>
+    <updated>2015-07-18T09:37:11.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="API构建">API构建</h3><p>这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。</p>
+<h4 id="命名空间">命名空间</h4><p>没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。</p>
+<p>还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀之前在加上你自己的前缀。</p>
+<a id="more"></a>
+<h4 id="designed_initializer和description方法">designed initializer和description方法</h4><p>这个东西不是很受重视，不过现在苹果推出了一个宏，专门用来指定NS_DESIGNATED_INITIALIZER，暂且叫它指定初始化方法吧。</p>
+<p>这个东西很有用，尤其是你有多个初始化方法时，不会引起子父类方法调用混淆。有一个注意点就是，父类的指定初始化最好在子类中复写一遍，以防止参数出错。</p>
+<p>description这个方法也不常用，不过在调试的过程中却非常有用，尤其是你写的框架给其他人使用的时候。</p>
+<h4 id="尽量用不可变">尽量用不可变</h4><p>不论是容器类型还是类属性的读写权限，对外暴露的尽量用不可变，只读的。可以通过方法写入数据，而对外暴露的则是readonly属性，然后在分类中改为readwrite属性。</p>
+<h4 id="命名规范">命名规范</h4><p>主要分方法命名还有类协议等命名，主要原则就是，命名方式要协调一致，可以多看苹果提供的类暴露出来的命名方式。</p>
+<p>私有方法加前缀等手段都应该遵循，常量的定义，都应该区分是私有的还是公共的。</p>
+<h4 id="Error&amp;&amp;Exception">Error&amp;&amp;Exception</h4><p>现在是ARC的年代，实在不推荐用异常，很容易引起内存泄露，当出现严重的问题时才会采用抛出异常的方式。在Obj-C中用error或者nil来代替异常，可以通过委托返回error（异步）或者指针返回（同步）。</p>
+<h4 id="copy">copy</h4><p>主要要弄清楚可变对象不可变对象的copy，mutableCopy，还有深拷贝和浅拷贝。</p>
+<p>深拷贝不仅要拷贝对象自身，还要拷贝底层的数据结构，系统实现的容器类的copy都是浅拷贝。</p>
+<p>不可变对象的copy总是返回自己。copy总是应该返回不可变对象，可变对象总应该用mutableCopy来获取。</p>
+<h3 id="Obj-C特有的协议和分类">Obj-C特有的协议和分类</h3><p>这两个特性是非常强大的，也是为数不多的语言亮点，尤其是分类，大多数面向对象语言都有类似协议的替代品，然而并没有很多具有分类的特点。</p>
+<h4 id="灵活的通信机制">灵活的通信机制</h4><p>在Obj-C中有一个特色，就是delegate和datasource，这种模式灰常有用，可以用来解除试图和数据的耦合度，主要通过协议来完成。一般情况下，datasource是数据流入，delegate是数据流出。</p>
+<p>注意点：</p>
+<ul>
+<li>这个模式不叫代理模式，不叫代理模式，不叫代理模式，重要的事说三遍，真实名字叫委托模式。</li>
+<li>还有委托对象的引用应该是weak，否则很容易就内存泄露了。</li>
+<li>一定，务必要判断委托对象是否实现了协议。</li>
+</ul>
+<h4 id="Category">Category</h4><p>这个东西有点被滥用了，是个好东西，但不应该用来代替继承和组合，一个用处可以重新组织类结构，还有一个可以用来玩一些黑魔法。</p>
+<pre><code><span class="at_rule">@<span class="keyword">interface</span> NSArray : NSObject &lt;NSCopying, NSMutableCopying, NSSecureCoding, NSFastEnumeration&gt;
+
+@property (readonly) NSUInteger count</span>;
+<span class="tag">-</span> (<span class="tag">id</span>)<span class="rule"><span class="attribute">objectAtIndex</span>:<span class="value">(NSUInteger)index</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="tag">init</span> <span class="tag">NS_DESIGNATED_INITIALIZER</span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithObjects</span>:<span class="value">(const id [])objects count:(NSUInteger)cnt NS_DESIGNATED_INITIALIZER</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithCoder</span>:<span class="value">(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER</span></span>;
+
+<span class="at_rule">@<span class="keyword">end</span>
+@interface NSArray (NSArrayCreation)
+
++ (instancetype)array</span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObject</span>:<span class="value">(id)anObject</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObjects</span>:<span class="value">(const id [])objects count:(NSUInteger)cnt</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObjects</span>:<span class="value">(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithArray</span>:<span class="value">(NSArray *)array</span></span>;
+
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithObjects</span>:<span class="value">(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithArray</span>:<span class="value">(NSArray *)array</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithArray</span>:<span class="value">(NSArray *)array copyItems:(BOOL)flag</span></span>;
+
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">arrayWithContentsOfFile</span>:<span class="value">(NSString *)path</span></span>;
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">arrayWithContentsOfURL</span>:<span class="value">(NSURL *)url</span></span>;
+<span class="tag">-</span> (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">initWithContentsOfFile</span>:<span class="value">(NSString *)path</span></span>;
+<span class="tag">-</span> (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">initWithContentsOfURL</span>:<span class="value">(NSURL *)url</span></span>;
+
+<span class="at_rule">@<span class="keyword">end</span></span>
+</code></pre><p>注意点：</p>
+<ul>
+<li>总是为第三方的类的分类加前缀</li>
+<li>总是为分类中的方法名加前缀</li>
+<li>不建议在分类中声明属性</li>
+</ul>
+<h4 id="Extention和匿名对象">Extention和匿名对象</h4><p>这个特性倒是一个好东西，以前想隐藏数据只能用实例变量放在.m中，有了类扩展后，可以在类内部声明属性，而不对外公布。当然由于Obj-C是一门非常动态的语言，这也不能做到真正的私有数据。</p>
+<pre><code><span class="preprocessor">#import <span class="title">"ViewController.h"</span></span>
+
+<span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()&lt;<span class="title">UIWebViewDelegate</span>, <span class="title">UIScrollViewDelegate</span>&gt;</span>
+<span class="keyword">@property</span> (<span class="keyword">weak</span>, <span class="keyword">nonatomic</span>) <span class="keyword">IBOutlet</span> <span class="built_in">UIWebView</span> *wv;
+
+<span class="keyword">@end</span>
+
+<span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span>
+
+- (<span class="keyword">void</span>)viewDidLoad {
+    [<span class="keyword">super</span> viewDidLoad];
+}
+<span class="keyword">@end</span>
+</code></pre><p>还有一个用处就是和C++混编的时候可以不暴露在头文件中，然后可以控制属性的访问权限。</p>
+<p>通过协议，我们可以实现匿名对象，可以影藏细节，而不用暴露具体的数据结构。</p>
+<pre><code><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> : <span class="title">UIViewController</span></span>
+
+- (<span class="keyword">id</span>&lt;<span class="built_in">NSCopying</span>&gt;)object;
+
+<span class="keyword">@end</span>
+</code></pre>]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="API构建">API构建</h3><p>这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。</p>
+<h4 id="命名空间">命名空间</h4><p>没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。</p>
+<p>还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀之前在加上你自己的前缀。</p>]]>
+    
+    </summary>
+    
+      <category term="effective" scheme="http://blog.tracyone.com/tags/effective/"/>
+    
+      <category term="iOS" scheme="http://blog.tracyone.com/categories/iOS/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Effective Obj-C <一>]]></title>
@@ -391,7 +488,7 @@ NSNumber <span class="keyword">*</span>expressionNumber = <span class="comment">
     <link href="http://blog.tracyone.com/2015/06/28/%E5%88%9D%E6%8E%A2GCD/"/>
     <id>http://blog.tracyone.com/2015/06/28/初探GCD/</id>
     <published>2015-06-28T10:08:41.000Z</published>
-    <updated>2015-06-28T10:11:00.000Z</updated>
+    <updated>2015-06-28T10:11:05.000Z</updated>
     <content type="html"><![CDATA[<h2 id="GCD简介">GCD简介</h2><p>GCD是一种简洁的多线程编程技术，通过配合Block让我们平时在需要用到异步时可以简单地使用，而不需要考虑线程的建立，调度等问题。XNU内核通过上下文切换来完成任务的调度（线程就是任务调度的抽象），不过这也带来了一些问题，比如说数据竞争，死锁，消耗内存等，为了解决这些问题，编程会变得很复杂，而GCD大大地简化了多线程编程的难度。</p>
 <h2 id="GCD技能树">GCD技能树</h2><a id="more"></a>
 <h3 id="Dispatch_Queue">Dispatch Queue</h3><p>首先要申明一点，queue不等于线程，多个queue也不代表了多个线程，一个queue也可能对应了多个线程，这里的queue其实是一个存放task的队列，遵循先进先出原则。</p>
@@ -790,7 +887,7 @@ dispatch_apply<span class="list">(<span class="number">10</span>, queue, ^<span 
     <link href="http://blog.tracyone.com/2015/06/16/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAARC-%E4%B8%8B/"/>
     <id>http://blog.tracyone.com/2015/06/16/深入浅出ARC-下/</id>
     <published>2015-06-16T14:24:52.000Z</published>
-    <updated>2015-06-20T02:56:36.000Z</updated>
+    <updated>2015-06-20T02:57:12.000Z</updated>
     <content type="html"><![CDATA[<p>终于到最后一篇了，前面两篇几乎没有涉及到ARC，全是内存管理，这一次要好好研究一下ARC的底层实现，在看的过程中感觉以前学得C++忘的差不多了。这一篇主要讲ARC的<strong>strong,</strong>weak,__autorelease修饰符背后发生了什么。</p>
 <h3 id="__strong">__strong</h3><p>找了很多资料，发现还是书上的解释比较靠谱，在strong类型对象超出作用域后会调用objc_release函数，当然在属性为strong的情况下赋值是会走这个方法objc_storeStrong，这个也是比较标准的setter方法的写法。<br><a id="more"></a><br>1.先取得原先的对象，然后和新的对象比较，如果是同一个则直接返回，然后对新的对象retain，赋给老得对象，然后再release老的对象，来保证赋值给strong类型的属性时可以正常的retainCount+1.</p>
 <pre><code>void

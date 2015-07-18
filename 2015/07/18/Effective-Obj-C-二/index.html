@@ -3,21 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>算法的思路 | TracyOne</title>
+  <title>Effective Obj-C &lt;二&gt; | TracyOne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="先说一个简单地题目，有一个无序的list里面存放了很多整数（有正有负），如何去求出它的最小子序列和呢？（最小子序指的是连续的子list之和最小，如果都是正数则为0）
-比如说有一个list = [1,-3,-2,5,2,-6],那么这个list的最小子序和则是-6，如果list = [1,-3,-2,5,2,-4]，那么这个list的最小子序和则是-5.">
+  <meta name="description" content="API构建这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。
+命名空间没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。
+还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀">
 <meta property="og:type" content="article">
-<meta property="og:title" content="算法的思路">
-<meta property="og:url" content="http://blog.tracyone.com/2015/06/30/算法的思路/index.html">
+<meta property="og:title" content="Effective Obj-C <二>">
+<meta property="og:url" content="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/index.html">
 <meta property="og:site_name" content="TracyOne">
-<meta property="og:description" content="先说一个简单地题目，有一个无序的list里面存放了很多整数（有正有负），如何去求出它的最小子序列和呢？（最小子序指的是连续的子list之和最小，如果都是正数则为0）
-比如说有一个list = [1,-3,-2,5,2,-6],那么这个list的最小子序和则是-6，如果list = [1,-3,-2,5,2,-4]，那么这个list的最小子序和则是-5.">
-<meta property="og:updated_time" content="2015-07-01T02:37:54.000Z">
+<meta property="og:description" content="API构建这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。
+命名空间没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。
+还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀">
+<meta property="og:updated_time" content="2015-07-18T09:37:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="算法的思路">
-<meta name="twitter:description" content="先说一个简单地题目，有一个无序的list里面存放了很多整数（有正有负），如何去求出它的最小子序列和呢？（最小子序指的是连续的子list之和最小，如果都是正数则为0）
-比如说有一个list = [1,-3,-2,5,2,-6],那么这个list的最小子序和则是-6，如果list = [1,-3,-2,5,2,-4]，那么这个list的最小子序和则是-5.">
+<meta name="twitter:title" content="Effective Obj-C <二>">
+<meta name="twitter:description" content="API构建这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。
+命名空间没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。
+还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀">
   
   
     <link rel="icon" href="/favicon.png">
@@ -125,7 +128,7 @@
     
   </div>
 </aside>
-      <section id="main"><article id="post-算法的思路" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-Effective-Obj-C-二" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -134,21 +137,21 @@
         
   
     <h1 class="article-title" itemprop="name">
-      算法的思路
+      Effective Obj-C &lt;二&gt;
     </h1>
   
 
         <div class="article-meta">
           <div class="article-date">
   <i class="fa fa-calendar"></i>
-  <a href="/2015/06/30/算法的思路/">
-    <time datetime="2015-06-30T13:33:55.000Z" itemprop="datePublished">2015-06-30</time>
+  <a href="/2015/07/18/Effective-Obj-C-二/">
+    <time datetime="2015-07-18T09:36:17.000Z" itemprop="datePublished">2015-07-18</time>
   </a>
 </div>
           
   <div class="article-category">
   	<i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/DataStructures-Algorithm/">DataStructures & Algorithm</a>
+    <a class="article-category-link" href="/categories/iOS/">iOS</a>
   </div>
 
         </div>
@@ -156,128 +159,93 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>先说一个简单地题目，有一个无序的list里面存放了很多整数（有正有负），<br>如何去求出它的最小子序列和呢？（最小子序指的是连续的子list之和最小，如果都是正数则为0）</p>
-<p>比如说有一个list = [1,-3,-2,5,2,-6],那么这个list的最小子序和则是-6，如果<br>list = [1,-3,-2,5,2,-4]，那么这个list的最小子序和则是-5.</p>
+        <h3 id="API构建">API构建</h3><p>这个领域可讲的点很多，设计规范，设计模式，设计范式，架构模式等。主要的宗旨就是可扩展，可维护，最终达到open-close原则。</p>
+<h4 id="命名空间">命名空间</h4><p>没有命名空间是我心中永远的痛啊，不过通过规范命名也能尽量避免,而更糟糕的是如果动态添加时碰到重名，崩溃就在一念间。</p>
+<p>还有亮点很容易被忽视，就是C语言函数总是作为顶级符号，不管你是否是声明在.h中。还有一个是如果你的库引用了第三方的记得在第三方已有的前缀之前在加上你自己的前缀。</p>
 <a id="more"></a>
-<h3 id="最简单的穷举法">最简单的穷举法</h3><p>这个问题初看很简单，就是两个循环记录每个子序的和，然后找出最小的和。很容易写出这样的算法：</p>
-<pre><code><span class="keyword">int</span> subMin(<span class="keyword">int</span> *list, <span class="keyword">int</span> length){
+<h4 id="designed_initializer和description方法">designed initializer和description方法</h4><p>这个东西不是很受重视，不过现在苹果推出了一个宏，专门用来指定NS_DESIGNATED_INITIALIZER，暂且叫它指定初始化方法吧。</p>
+<p>这个东西很有用，尤其是你有多个初始化方法时，不会引起子父类方法调用混淆。有一个注意点就是，父类的指定初始化最好在子类中复写一遍，以防止参数出错。</p>
+<p>description这个方法也不常用，不过在调试的过程中却非常有用，尤其是你写的框架给其他人使用的时候。</p>
+<h4 id="尽量用不可变">尽量用不可变</h4><p>不论是容器类型还是类属性的读写权限，对外暴露的尽量用不可变，只读的。可以通过方法写入数据，而对外暴露的则是readonly属性，然后在分类中改为readwrite属性。</p>
+<h4 id="命名规范">命名规范</h4><p>主要分方法命名还有类协议等命名，主要原则就是，命名方式要协调一致，可以多看苹果提供的类暴露出来的命名方式。</p>
+<p>私有方法加前缀等手段都应该遵循，常量的定义，都应该区分是私有的还是公共的。</p>
+<h4 id="Error&amp;&amp;Exception">Error&amp;&amp;Exception</h4><p>现在是ARC的年代，实在不推荐用异常，很容易引起内存泄露，当出现严重的问题时才会采用抛出异常的方式。在Obj-C中用error或者nil来代替异常，可以通过委托返回error（异步）或者指针返回（同步）。</p>
+<h4 id="copy">copy</h4><p>主要要弄清楚可变对象不可变对象的copy，mutableCopy，还有深拷贝和浅拷贝。</p>
+<p>深拷贝不仅要拷贝对象自身，还要拷贝底层的数据结构，系统实现的容器类的copy都是浅拷贝。</p>
+<p>不可变对象的copy总是返回自己。copy总是应该返回不可变对象，可变对象总应该用mutableCopy来获取。</p>
+<h3 id="Obj-C特有的协议和分类">Obj-C特有的协议和分类</h3><p>这两个特性是非常强大的，也是为数不多的语言亮点，尤其是分类，大多数面向对象语言都有类似协议的替代品，然而并没有很多具有分类的特点。</p>
+<h4 id="灵活的通信机制">灵活的通信机制</h4><p>在Obj-C中有一个特色，就是delegate和datasource，这种模式灰常有用，可以用来解除试图和数据的耦合度，主要通过协议来完成。一般情况下，datasource是数据流入，delegate是数据流出。</p>
+<p>注意点：</p>
+<ul>
+<li>这个模式不叫代理模式，不叫代理模式，不叫代理模式，重要的事说三遍，真实名字叫委托模式。</li>
+<li>还有委托对象的引用应该是weak，否则很容易就内存泄露了。</li>
+<li>一定，务必要判断委托对象是否实现了协议。</li>
+</ul>
+<h4 id="Category">Category</h4><p>这个东西有点被滥用了，是个好东西，但不应该用来代替继承和组合，一个用处可以重新组织类结构，还有一个可以用来玩一些黑魔法。</p>
+<pre><code><span class="at_rule">@<span class="keyword">interface</span> NSArray : NSObject &lt;NSCopying, NSMutableCopying, NSSecureCoding, NSFastEnumeration&gt;
 
-    <span class="keyword">int</span> minSum = <span class="number">0</span>;
-    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; length; i++) {
-        <span class="keyword">for</span> (<span class="keyword">int</span> j=i; j &lt; length; j++) {
-            <span class="keyword">int</span> <span class="keyword">sum</span> = <span class="number">0</span>;
-            <span class="keyword">for</span> (<span class="keyword">int</span> k = i; k &lt;= j; k++) {
-                <span class="keyword">sum</span> += *(list+k);
-            }
+@property (readonly) NSUInteger count</span>;
+<span class="tag">-</span> (<span class="tag">id</span>)<span class="rule"><span class="attribute">objectAtIndex</span>:<span class="value">(NSUInteger)index</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="tag">init</span> <span class="tag">NS_DESIGNATED_INITIALIZER</span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithObjects</span>:<span class="value">(const id [])objects count:(NSUInteger)cnt NS_DESIGNATED_INITIALIZER</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithCoder</span>:<span class="value">(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER</span></span>;
 
-            <span class="keyword">if</span> (<span class="keyword">sum</span> &lt; minSum) {
-                minSum = <span class="keyword">sum</span>;
-            }
-        }
-    }
+<span class="at_rule">@<span class="keyword">end</span>
+@interface NSArray (NSArrayCreation)
 
-    <span class="keyword">return</span> minSum;
++ (instancetype)array</span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObject</span>:<span class="value">(id)anObject</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObjects</span>:<span class="value">(const id [])objects count:(NSUInteger)cnt</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithObjects</span>:<span class="value">(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION</span></span>;
++ (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">arrayWithArray</span>:<span class="value">(NSArray *)array</span></span>;
+
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithObjects</span>:<span class="value">(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithArray</span>:<span class="value">(NSArray *)array</span></span>;
+<span class="tag">-</span> (<span class="tag">instancetype</span>)<span class="rule"><span class="attribute">initWithArray</span>:<span class="value">(NSArray *)array copyItems:(BOOL)flag</span></span>;
+
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">arrayWithContentsOfFile</span>:<span class="value">(NSString *)path</span></span>;
++ (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">arrayWithContentsOfURL</span>:<span class="value">(NSURL *)url</span></span>;
+<span class="tag">-</span> (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">initWithContentsOfFile</span>:<span class="value">(NSString *)path</span></span>;
+<span class="tag">-</span> (<span class="tag">NSArray</span> *)<span class="rule"><span class="attribute">initWithContentsOfURL</span>:<span class="value">(NSURL *)url</span></span>;
+
+<span class="at_rule">@<span class="keyword">end</span></span>
+</code></pre><p>注意点：</p>
+<ul>
+<li>总是为第三方的类的分类加前缀</li>
+<li>总是为分类中的方法名加前缀</li>
+<li>不建议在分类中声明属性</li>
+</ul>
+<h4 id="Extention和匿名对象">Extention和匿名对象</h4><p>这个特性倒是一个好东西，以前想隐藏数据只能用实例变量放在.m中，有了类扩展后，可以在类内部声明属性，而不对外公布。当然由于Obj-C是一门非常动态的语言，这也不能做到真正的私有数据。</p>
+<pre><code><span class="preprocessor">#import <span class="title">"ViewController.h"</span></span>
+
+<span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()&lt;<span class="title">UIWebViewDelegate</span>, <span class="title">UIScrollViewDelegate</span>&gt;</span>
+<span class="keyword">@property</span> (<span class="keyword">weak</span>, <span class="keyword">nonatomic</span>) <span class="keyword">IBOutlet</span> <span class="built_in">UIWebView</span> *wv;
+
+<span class="keyword">@end</span>
+
+<span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span>
+
+- (<span class="keyword">void</span>)viewDidLoad {
+    [<span class="keyword">super</span> viewDidLoad];
 }
-</code></pre><p>这个算法非常简单，思路也很清晰，既然需要求最小的那个子序，那我就列出每一个子序求和，得出最小的那个。第一个循环用来标记起始位，第二个循环标记结束位，最里面一层循环用来计算起始位到结束位的和。</p>
-<h3 id="进击的穷举法">进击的穷举法</h3><p>这个算法虽然写起来很简单，但显而易见的时间复杂度非常高。这种思路下的算法只能作为备用，这种算法也有一个种称号叫穷举法。那么我们来看下这个算法是否还有改进的地方：</p>
-<pre><code><span class="keyword">int</span> subMinUpgrade(<span class="keyword">int</span> *list, <span class="keyword">int</span> length){
+<span class="keyword">@end</span>
+</code></pre><p>还有一个用处就是和C++混编的时候可以不暴露在头文件中，然后可以控制属性的访问权限。</p>
+<p>通过协议，我们可以实现匿名对象，可以影藏细节，而不用暴露具体的数据结构。</p>
+<pre><code><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> : <span class="title">UIViewController</span></span>
 
-    <span class="keyword">int</span> minSum = <span class="number">0</span>;
-    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; length; i++) {
+- (<span class="keyword">id</span>&lt;<span class="built_in">NSCopying</span>&gt;)object;
 
-        <span class="keyword">int</span> <span class="keyword">sum</span> = <span class="number">0</span>;
-        <span class="keyword">for</span> (<span class="keyword">int</span> j=i; j &lt; length; j++) {
-
-            <span class="keyword">sum</span> += *(list + j);
-
-            <span class="keyword">if</span> (<span class="keyword">sum</span> &lt; minSum) {
-                minSum = <span class="keyword">sum</span>;
-            }
-        }
-    }
-
-    <span class="keyword">return</span> minSum;
-}
-</code></pre><p>经过分析，其实能发现，第三层的循环是多余的，因为在第二层循环的时候已经能够穷举每一种情况了，只是不够直观，这个思路利用了在建立穷举界限的步骤中加入运算的步骤来简化。很明显时间复杂度下降了一个量级。但是这就是一个我们所追求的好的算法么！</p>
-<h3 id="分治的思路">分治的思路</h3><p>归根到底，这种算法也还是一种穷举法，会遍历所有的情况，既然这样，那我能不能每次循环中做的事情更多一点，或者能不能减少循环的次数呢？带着这样的想法，我尝试了把这个队列一分为二，这样我就能减少循环次数了，但是分成两份后怎样去求最小的子序和呢？</p>
-<p>举个例子：30,-25,14,-24,1,35,-25,10，这个list。想要求出最小值我们其实可以求左边4个的最小值，或者右边4个的最小值，然后求出横跨两边的最小值，最后求出这三者的最小值，那就是我们需要的最小值。</p>
-<pre><code><span class="function"><span class="keyword">int</span> <span class="title">subMinRecursion</span><span class="params">(<span class="keyword">int</span> *<span class="built_in">list</span>, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span></span>{
-    <span class="keyword">int</span> minSumLeft = <span class="number">0</span>;
-    <span class="keyword">int</span> minSumRight = <span class="number">0</span>;
-
-    <span class="keyword">int</span> sumLeftCross = <span class="number">0</span>;
-    <span class="keyword">int</span> minSumLeftCross = <span class="number">0</span>;
-
-    <span class="keyword">int</span> sumRightCross = <span class="number">0</span>;
-    <span class="keyword">int</span> minSumRightCross = <span class="number">0</span>;
-
-    <span class="keyword">if</span> (start == end) {
-        <span class="keyword">if</span> (*(<span class="built_in">list</span>+start) &gt; <span class="number">0</span>) {
-            <span class="keyword">return</span> <span class="number">0</span>;
-        }<span class="keyword">else</span>{
-            <span class="keyword">return</span> *(<span class="built_in">list</span>+start);
-        }
-    }<span class="keyword">else</span>{
-
-        <span class="keyword">int</span> mid = (end + start)/<span class="number">2</span>;
-
-
-        minSumLeft = subMinRecursion(<span class="built_in">list</span>, start, mid);
-        minSumRight = subMinRecursion(<span class="built_in">list</span>, mid+<span class="number">1</span>, end);
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i = end/<span class="number">2</span>; i &gt;= start; i--) {
-            sumLeftCross += *(<span class="built_in">list</span>+i);
-
-            <span class="keyword">if</span> (sumLeftCross &lt; minSumLeftCross) {
-                minSumLeftCross = sumLeftCross;
-            }
-        }
-
-        <span class="keyword">for</span> (<span class="keyword">int</span> i = end/<span class="number">2</span> + <span class="number">1</span>; i &lt;= end; i++) {
-            sumRightCross += *(<span class="built_in">list</span>+i);
-
-            <span class="keyword">if</span> (sumRightCross &lt; minSumRightCross) {
-                minSumRightCross = sumRightCross;
-            }
-        }
-
-        <span class="keyword">return</span> minOfThree(minSumLeft, minSumRight, minSumLeftCross + minSumRightCross);
-
-    }
-}
-</code></pre><p>很长但是也很好理解，每次的在最小值的计算都是基于子list的最小值，如果是正数就返回0表示排除。总的来说时间复杂度在NlogN级别。</p>
-<p>那么为什么这个算法可以降低时间复杂度呢，原因就在于他用到了分治的思路，每一次循环都能减少前一次一半的情况，这样的思路我们可以运用到很多场景，比如说二分查找，二分排序等，包括二叉树建立的思路也是这样的。</p>
-<h3 id="换个角度">换个角度</h3><p>这里先给出程序，让我们来看下这样的问题还能玩出什么花样?</p>
-<pre><code>int subM<span class="keyword">in</span>Other(int* list, int length){
-    int sumSubM<span class="keyword">in</span> = <span class="number">0</span>;
-    int minSumSubM<span class="keyword">in</span> = <span class="number">0</span>;
-
-    <span class="keyword">for</span> (int i=<span class="number">0</span>; i &lt; length; i++) {
-        sumSubM<span class="keyword">in</span> += *(list+i);
-
-        <span class="keyword">if</span> (sumSubM<span class="keyword">in</span> &lt; minSumSubM<span class="keyword">in</span>) {
-            minSumSubM<span class="keyword">in</span> = sumSubM<span class="keyword">in</span>;
-        }<span class="keyword">else</span> <span class="keyword">if</span>(sumSubM<span class="keyword">in</span> &gt; <span class="number">0</span>){
-            sumSubM<span class="keyword">in</span> = <span class="number">0</span>;
-        }
-    }
-
-    <span class="built_in">return</span> minSumSubM<span class="keyword">in</span>;
-}
-</code></pre><p>这里主要就用到了一个技巧，就是如果连续的累加值超过0了那可以把前面的累加值看成0，而只需要用另外一个变量记录下来之前的最小值，然后反复不断的查找一段一段的最小值，直到最后找出真实最小的那一个值。</p>
-<h3 id="总结">总结</h3><p>那么这样的一个例子说明了什么呢？总的来说，碰到任何问题，穷举总是能解决问题的，但是在有限的资源下，如何更好地利用就是我们需要思考的问题，很多人要问就算我知道了这样的解法有什么用呢？不说别的单单指这一个例子就能运用到很多地方。</p>
-<p>比如说，以前玩游戏经常买卖装备赚差价，有时候高有时候低，如果做一个统计以后，最后就能得出大致在什么时间点是能够卖得最高的，那今后就能够利用这个点去赚钱，再比如说，每个公司都有自己的数据统计，如何从海量的数据中找出那个最有价值的数据。</p>
-<p>最后再附上一道题目一起来思考下如何用有限的资源完成无限的可能：<br>假设有一个文件，包含了1000万条数据，每条数据都是一个7位整数，并且没有重复（e.g 00000000-9999999），在最多只有1M内存空间可用的情况下，如何进行排序呢？当然运行时间越少越好。</p>
-
+<span class="keyword">@end</span>
+</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://blog.tracyone.com/2015/06/30/算法的思路/" data-id="cic8v23950004ev32nv59pryv" class="article-share-link">分享到</a>
+      <a data-url="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/" data-id="cic8v23a30019ev326uhydpw5" class="article-share-link">分享到</a>
       
-        <a href="http://blog.tracyone.com/2015/06/30/算法的思路/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/#ds-thread" class="article-comment-link">评论</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/algorithm/">algorithm</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/effective/">effective</a></li></ul>
 
     </footer>
   </div>
@@ -285,19 +253,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/07/01/一步一脚印封装CoreData/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          一步一脚印封装CoreData
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/06/28/初探GCD/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/07/08/Effective-Obj-C-一/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">初探GCD</div>
+      <div class="article-nav-title">Effective Obj-C &lt;一&gt;</div>
     </a>
   
 </nav>
@@ -307,7 +266,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/06/30/算法的思路/" data-title="算法的思路" data-url="http://blog.tracyone.com/2015/06/30/算法的思路/">
+    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/" data-title="Effective Obj-C <二>" data-url="http://blog.tracyone.com/2015/07/18/Effective-Obj-C-二/">
       <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by DuoShuo.</a></noscript>
       </div>
   </section>
