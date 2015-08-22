@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-07-18T09:37:11.000Z</updated>
+  <updated>2015-08-22T07:46:24.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,143 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[跳槽随想]]></title>
+    <link href="http://blog.tracyone.com/2015/08/22/%E8%B7%B3%E6%A7%BD%E9%9A%8F%E6%83%B3/"/>
+    <id>http://blog.tracyone.com/2015/08/22/跳槽随想/</id>
+    <published>2015-08-22T07:42:26.000Z</published>
+    <updated>2015-08-22T07:46:24.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="开篇先唠叨下">开篇先唠叨下</h2><p>近一个月没有更新过博客了，这个月基本都在忙着找新东家，也面试了很多公司，总的来说还是很有收获的，做个总结，回顾一下这一年来的收获，以及接下来的打算，当然还有这次面试的经历。</p>
+<h2 id="感谢老东家—同程">感谢老东家—同程</h2><p>还记得当初去面试同程的时候还是很忐忑的，接触iOS开发还不足两个月，只会简单的开发页面。记得当时还网上搜了一点面经，死记硬背的终于是过了同程的笔试，面试的时候就露馅了，好说歹说的总算是进了，当时的主管评价就是做iOS开发半年的样子。</p>
+<a id="more"></a>
+<p>其实当时的iOS团队还是非常厉害的，放眼望去全是我学习的榜样，每个人都很牛，又热衷于技术。在这里碰到了我的师傅黄大师，还有两个导师（新疆人&amp;方大师），还有很多技术达人，现在的好战友（静静，水由人，小钢炮，厂长等）。</p>
+<p>在这个期间看了很多书，博客，自己也开始加入这个行列，把自己学到知识分享出去。不知不觉也一年过去了，慢慢的开始对未来的方向模糊了，少了当初的追求技术极限的激情。猛然回首，还是决定，趁着年轻，再去远方追逐曾经的梦想。</p>
+<p>非常感谢同程的包容与开放，非常感谢我的leader一如既往的支持我，最后走之前把我这一年来看过的书，iOS学习之路分享出来。</p>
+<h2 id="面试的经历">面试的经历</h2><p>重点还是说一下这次的面试经历吧，这次面试其实不是我一个人在战斗，女朋友一路陪伴，先祝贺下她顺利进入心仪很久的天猫前端团队吧。刚开始选择工作地点的时候是很纠结的，家在苏州，然而苏州却没有很好的互联网企业，不得不退而求其次，选择周围两小时能到达的区域（上海，杭州）。然后就开始筛选有哪些企业了，总共考虑了如下几个企业：</p>
+<ol>
+<li>上海：百度，腾讯，京东，携程</li>
+<li>杭州：阿里，网易，蘑菇街</li>
+</ol>
+<p>有一点是很纠结的，上海的那些企业大多是分公司，不在总部总是感觉怪怪的，更可气的是：百度和腾讯压根就没给面试的机会。好了废话这么多，下面分享面试的题目。</p>
+<h3 id="iOS底层实现">iOS底层实现</h3><p>有一些特别基础的类似消息传递区别，转发机制这种的大多只是带过的。</p>
+<ol>
+<li><p>runtime的使用场景？为什么能做到运行时替换方法？如果是在C语言中如何实现？</p>
+</li>
+<li><p>block的实现？注意事项？为什么能够获取外部变量？</p>
+</li>
+<li><p>runloop是什么？哪些场景会用？有哪些源，通知？</p>
+</li>
+<li><p>autoreleasePool的实现原理？如何保证嵌套pool的正确管理？</p>
+</li>
+<li><p>内存管理机制？weak如何实现？</p>
+</li>
+<li><p>多线程中GCD，OperationQueue使用场景？多线程中碰到的挑战？如何解决？</p>
+</li>
+</ol>
+<p>这些问题大多在实际开发中都会碰到，之前也有去看过Objc的源码，所以大多数都回答出来了。</p>
+<h3 id="iOS框架实现">iOS框架实现</h3><p>主要考了缓存库，网络库，动态配置，hybrid以及hotfix的实现。</p>
+<ol>
+<li><p>缓存策略？如何保证多线程下的安全读写？顺便还问了文件目录的区别？然后还问了下Unix下的文件I/O。</p>
+</li>
+<li><p>网络协议？对象Json映射？加密策略，区别？然后有问到Unix下的socket。</p>
+</li>
+<li><p>动态配置主要问的是一种想法，主要就是容器的搭建，组件的可配置化，后台系统的维护。</p>
+</li>
+<li><p>hybrid的原理？js调用Objc的策略？区别是什么？路由机制？然后还问了一些js的相关问题。</p>
+</li>
+<li><p>hotfix用了哪些技术？wax和jsPatch区别？jsPatch实现原理？如何解决C中的数据结构和js中的对象映射等。</p>
+</li>
+</ol>
+<p>这一部分大多都是我在同程做的或者参与的专项，然后拖女票是做前端的，所以我也很喜欢js，大多都回答出来了。</p>
+<h3 id="计算机基础">计算机基础</h3><p>这方面一般都是对方的技术总监问的，也是被面的最惨的地方，回答的零零散散，接下来要好好的学习下。</p>
+<ol>
+<li><p>操作系统（进程，异步I/O，线程的区别？线程同步机制？线程局部存储机制？内核态，用户态是什么？）</p>
+</li>
+<li><p>计算机网络（http如何保证长连接？tcp窗口滑动机制？路由算法？https的链接过程）</p>
+</li>
+<li><p>算法与数据结构（主要考了一些ACM的题目，常规算法的设计思路？数据结构和抽象数据类型的关系等）</p>
+</li>
+</ol>
+<p>这一方面虽然这半年来一直在学习，但是在学校基础打得不够好，有些还是有没回答出来。<br>幸亏曾经参加过ACM比赛，在算法那一块回答的还算可以。</p>
+<h3 id="开发的思路">开发的思路</h3><p>这一方面考的很灵活，主要是现场让你设计一个功能。</p>
+<ol>
+<li><p>让你设计如何保证UDP的可靠性？</p>
+</li>
+<li><p>当App达到一定量级后，如何拆分工程来达到多部门协作？</p>
+</li>
+<li><p>如何设计一个测试，来定位到webview的内存泄露点？</p>
+</li>
+</ol>
+<p>在这里感觉就是回答的对与否不重要了，应该主要考思路是否清晰，异常情况是否考虑清楚了。</p>
+<p>总的来说，在面试的过程中也是查漏补缺的时候，非常感谢那些面试我的大牛们抽出时间陪我“唠嗑”。</p>
+<h2 id="未来的展望—支付宝">未来的展望—支付宝</h2><p>最终其实有拿到大多数公司的offer，不过最后还是选择了支付宝，主要是女朋友非常喜欢天猫团队，一下就把范围缩小到杭州了，然后看了下天猫竟然是在边角旮旯里，只有支付宝离的还算近一点，再加上我也一直很向往阿里的技术氛围，就毫不犹豫的选择了。希望以后能在这里学到更多，为公司献出自己的一份力。</p>
+<p>然后就是学习方面，今年是打算学习前端和服务端的相关方面的内容，以及巩固计算机基础，为将来的理想，架构师前行。最后把这一年学过的一丁点心得发出来：</p>
+<p>我一般看书都会买两本，一本是入门的，一本是相当有深度的进阶的，先花一个周末把入门的书都看完，对那个领域知道个大概，然后带着疑问去深读进阶书，一般也就是一个月内解决。一年也能看12*2本书了。</p>
+<h2 id="看过的书">看过的书</h2><pre><code>基础理论：            深入理解计算机系统（第<span class="number">2</span>版）
+
+<span class="label">Objc:</span>                Objc编程全解+Objc高级编程+Effective Objc2.0
+
+编程语言理论：            程序设计语言——实践之路（第<span class="number">3</span>版）
+
+算法与数据结构：        编程珠玑（第<span class="number">2</span>版）+数据结构与算法分析(c语言)
+
+计算机网络：            TCP/IP卷<span class="number">1</span> 
+
+<span class="label">OS:</span>                    Linux私房菜+Unix高级编程
+
+编程实践：            代码大全（第<span class="number">2</span>版）+编程之美
+
+面向对象程序设计：        设计模式+敏捷开发原则
+
+专业开发：            程序员修炼之道：从小工到专家+程序员职业素养
+
+项目管理：            人月神话
+</code></pre><h2 id="iOS学习之路">iOS学习之路</h2><p>这里主要是列一个大纲，总结下现在掌握的内容，为接下来的学习指个路，慢慢的完善技能树，希望有朝一日也能站在XXX峰会的舞台上分享下自己的所得所获。</p>
+<pre><code><span class="label">iOS</span>：
+
+<span class="label">General</span> &amp; Xcode
+<span class="label">Laguage</span> (runtime)
+<span class="label">Data</span> Manage (coredata,file)
+<span class="label">User</span> Experience (uikit)
+
+<span class="label">Performance</span> &amp; Security (内存，多线程)
+<span class="label">Networking</span> &amp; Internet
+<span class="label">Audio</span> &amp; Video
+<span class="label">Graphics</span> &amp; Animation
+<span class="keyword">Swift
+</span>
+工具：
+<span class="label">linux</span>：（正则，shell（awk，管道，重定向），shell script）
+<span class="label">js</span>：（node，HTML，CSS）
+<span class="label">git</span>：（github，console）
+<span class="label">mac</span>：（Charles，dash，<span class="keyword">sublime，Alfred）
+</span>反编译：（classdump，IDA，<span class="keyword">reveal）
+</span>
+计算机理论：
+<span class="label">OS</span>
+网络
+数据结构&amp;算法
+C标准库
+
+架构：
+服务端
+设计模式，思想（结构化，对象，函数式）
+敏捷，重构
+代码质量（规范，<span class="keyword">review）
+</span>程序员素养
+</code></pre>]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="开篇先唠叨下">开篇先唠叨下</h2><p>近一个月没有更新过博客了，这个月基本都在忙着找新东家，也面试了很多公司，总的来说还是很有收获的，做个总结，回顾一下这一年来的收获，以及接下来的打算，当然还有这次面试的经历。</p>
+<h2 id="感谢老东家—同程">感谢老东家—同程</h2><p>还记得当初去面试同程的时候还是很忐忑的，接触iOS开发还不足两个月，只会简单的开发页面。记得当时还网上搜了一点面经，死记硬背的终于是过了同程的笔试，面试的时候就露馅了，好说歹说的总算是进了，当时的主管评价就是做iOS开发半年的样子。</p>]]>
+    
+    </summary>
+    
+      <category term="life" scheme="http://blog.tracyone.com/tags/life/"/>
+    
+      <category term="工作总结" scheme="http://blog.tracyone.com/categories/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Effective Obj-C <二>]]></title>
