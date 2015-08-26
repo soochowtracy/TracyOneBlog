@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-08-22T07:46:24.000Z</updated>
+  <updated>2015-08-26T08:21:12.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,101 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[我的iOS开发之路《上》]]></title>
+    <link href="http://blog.tracyone.com/2015/08/26/%E6%88%91%E7%9A%84iOS%E5%BC%80%E5%8F%91%E4%B9%8B%E8%B7%AF%E3%80%8A%E4%B8%8A%E3%80%8B/"/>
+    <id>http://blog.tracyone.com/2015/08/26/我的iOS开发之路《上》/</id>
+    <published>2015-08-26T08:15:30.000Z</published>
+    <updated>2015-08-26T08:21:12.000Z</updated>
+    <content type="html"><![CDATA[<p>这篇博客不谈具体的技术，谈谈学习iOS开发以来的心得和所得所获，大致的过程分为</p>
+<ol>
+<li>学习之前有哪些基础</li>
+<li>如何入门</li>
+<li>持续学习</li>
+<li>进阶的辛酸</li>
+<li>未来的计划</li>
+</ol>
+<a id="more"></a>
+<h2 id="基础篇">基础篇</h2><p>在2014年7月份，我的第一份工作，还是一个实习生的时候，突然接到通知要做iOS开发，在这之前的实习期间主要做Web和DB，在校期间学了点OS，算法，数据结构，网络的基础，英语阅读能力也还行。在刚开始做iOS的时候其实我是拒绝的，觉得自己之前学的都白学了，而且都毕业了，再转会不会晚了等等疑问不断地响起。</p>
+<p>然而事实证明，做一件事永远都不嫌晚，重要的是是否坚持去做了。还有一些看似和iOS无关的知识其实还是很重要的，在理解iOS底层方面打下了基础。</p>
+<p>回过头想想，在大学期间，有些课真的应该认真学习，尤其是那些公共基础类的课：操作系统，数据结构与算法，计算机网络，计算机组成原理，还推荐一门编程语言，也是我认为在大学期间应该学好的唯一一门编程语言：C语言。有了这些基础后，想要学习具体的一个平台上的开发，真的会变得很容易。不管是iOS平台，还是安卓，或者是windows，linux平台。</p>
+<h2 id="iOS入门">iOS入门</h2><p>我的入门经验就是边学边做，那时候刚转的时候，就给了我两天时间看一本书《iOS编程》。当时我的做法是先去查询了iOS开发有哪些内容，总结过后发现入门其实只需要懂Objc这门语言基本语法和UIKit，Foundation这两个库。</p>
+<p>然后当时花了一天时间学习了Objc的基本语法（类，对象，接口，协议，分类，扩展，属性），还有一天时间熟悉了Foundation（NSObject，NSString，NSArray，NSDictionary，NSValue，NSSet，NSData）和UIKit（UIColor，UIFont，UIImage，UIImageView，UILabel，UIButton，UIScrollView，UITableView，UIView，UIViewController，UIWebView）。</p>
+<p>期间还看了这篇官方入门文章，跟着教程做了一遍，熟悉了下Xcode，结合书上说得实践一下，加深下理解。</p>
+<ul>
+<li><a href="https://developer.apple.com/library/prerelease/ios/referencelibrary/GettingStarted/RoadMapiOS/index.html#//apple_ref/doc/uid/TP40011343" target="_blank" rel="external">Start Developing iOS Apps Today</a></li>
+</ul>
+<p>然后就开始写页面之旅，基本就是一个页面一个tableview，然后加上label和button就能解决了，这期间开始补充了（delegate，MVC，Notification，KVC&amp;KVO，Block，ARC，Autolayout，异常，多线程）这方面的基础知识。</p>
+<p>这里还是要重点说一下的，我当时的选择还是偏向于学习Objc这门语言的一些特性，而不是去学习其他的framework，事实证明，当初的选择还是很正确的，当基础扎实后，再去学其他框架都很轻松，基本看一遍文档就行了。在这个期间看了这两本书《Objective-C编程全解》和《iOS6编程实战》，一本是主要讲解Objc这门语言有哪些特性，还有一本则是讲解了cocoa touch中的一些特性。</p>
+<p>这时候碰到了一个问题，当时我实习的公司不怎么重视移动端，总共就3个人做客户端，碰到很多问题可能需要花很长时间排查，学习的效率开始降低。然后就萌生了跳槽的想法，省去中间曲折的求职经历，最后去了一家发展比较迅速的互联网公司，开始了我的进阶之旅。</p>
+<h2 id="持续学习">持续学习</h2><p>这个时候其实还是比较舒适的，团队人很多，但app又是偏向业务的，所以大部分内容都是if-else和tableview，用之前学的知识完全够用了。直到碰到了一个带我真正入门iOS开发的人，我开始意识到iOS不是这么简单，如果不想以后失去竞争力，需要了解的东西还有太多，太多，然后看了Apple的两篇全面介绍iOS开发的文章。</p>
+<ul>
+<li><a href="https://developer.apple.com/library/prerelease/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007898" target="_blank" rel="external">iOS Technology Overview</a></li>
+<li><a href="https://developer.apple.com/library/prerelease/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072" target="_blank" rel="external">App Programming Guide for iOS</a></li>
+</ul>
+<p>这两篇文章让我全面的理解了iOS开发包含了那些内容,可以往哪些方向发展。</p>
+<h3 id="Cocoa_Touch_Layer">Cocoa Touch Layer</h3><p>在这一层主要学习了这些内容：</p>
+<ol>
+<li>App Extensions（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214" target="_blank" rel="external">App Extension Programming Guide</a>）</li>
+<li>Handoff（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UserExperience/Conceptual/Handoff/HandoffFundamentals/HandoffFundamentals.html#//apple_ref/doc/uid/TP40014338" target="_blank" rel="external">Handoff Programming Guide</a>）</li>
+<li>Document Picker（<a href="https://developer.apple.com/library/prerelease/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40014451" target="_blank" rel="external">Document Picker Programming Guide</a>）</li>
+<li>AirDrop（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIActivityViewController_Class/index.html#//apple_ref/doc/uid/TP40011976" target="_blank" rel="external">UIActivityViewController Class Reference</a>）</li>
+<li>TextKit（<a href="https://developer.apple.com/library/prerelease/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009542" target="_blank" rel="external">Text Programming Guide for iOS</a>）</li>
+<li>UIKit Dynamics（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIKit_Framework/index.html#//apple_ref/doc/uid/TP40006955" target="_blank" rel="external">UIKit Framework Reference</a>）</li>
+<li>Multitasking（<a href="https://developer.apple.com/library/prerelease/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072" target="_blank" rel="external">App Programming Guide for iOS</a>）</li>
+<li>Auto Layout（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html#//apple_ref/doc/uid/TP40010853" target="_blank" rel="external">Auto Layout Guide</a>）</li>
+<li>Storyboards（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIStoryboard_Class/index.html#//apple_ref/doc/uid/TP40010909" target="_blank" rel="external">UIStoryboard Class Reference</a>）</li>
+<li>UI State Preservation（<a href="https://developer.apple.com/library/prerelease/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072" target="_blank" rel="external">App Programming Guide for iOS</a>）</li>
+<li>Apple Push Notification Service（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html#//apple_ref/doc/uid/TP40008194" target="_blank" rel="external">Local and Remote Notification Programming Guide</a>）</li>
+<li>Local Notifications（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html#//apple_ref/doc/uid/TP40008194" target="_blank" rel="external">Local and Remote Notification Programming Guide</a>）</li>
+<li>Gesture Recognizers（<a href="https://developer.apple.com/library/prerelease/ios/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009541" target="_blank" rel="external">Event Handling Guide for iOS</a>）</li>
+<li>Standard System View Controllers（<a href="https://developer.apple.com/library/prerelease/ios/featuredarticles/ViewControllerPGforiPhoneOS/index.html#//apple_ref/doc/uid/TP40007457" target="_blank" rel="external">View Controller Programming Guide for iOS</a>和<a href="https://developer.apple.com/library/prerelease/ios/documentation/WindowsViews/Conceptual/ViewControllerCatalog/Introduction.html#//apple_ref/doc/uid/TP40011313" target="_blank" rel="external">View Controller Catalog for iOS</a>）</li>
+</ol>
+<p>主要包括了10个Framework（Address Book UI Framework，EventKit UI Framework，GameKit Framework，iAd Framework，MapKit Framework，Message UI Framework，Notification Center Framework，PushKit Framework，Twitter Framework以及最重要的UIKit Framework）。</p>
+<p>这些内容大概花了3个月的时间全部实践了一遍，可惜当时还没有写博客的习惯，很多都没有记录下来。</p>
+<h3 id="Media_Layer">Media Layer</h3><p>这一层的内容与一些其他专业知识相关，理解的时候需要更多的专业领域的知识，我也没有全部都学完，主要学了平时经常用到的绘图和动画，这一层主要包括这些内容：</p>
+<h4 id="Graphics_Technologies">Graphics Technologies</h4><ol>
+<li>UIKit graphics（<a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIKit_Framework/index.html#//apple_ref/doc/uid/TP40006955" target="_blank" rel="external">UIKit Framework Reference</a>）</li>
+<li>Core Graphics（<a href="https://developer.apple.com/library/prerelease/ios/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/Introduction/Introduction.html#//apple_ref/doc/uid/TP30001066" target="_blank" rel="external">Quartz 2D Programming Guide</a>）</li>
+<li>Core Animation（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004514" target="_blank" rel="external">Core Animation Programming Guide</a>）</li>
+<li>Core Image（<a href="https://developer.apple.com/library/prerelease/ios/documentation/GraphicsImaging/Reference/CoreImagingRef/index.html#//apple_ref/doc/uid/TP40001171" target="_blank" rel="external">Core Image Reference Collection</a>）</li>
+<li>OpenGL ES and GLKit（<a href="https://developer.apple.com/library/prerelease/ios/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008793" target="_blank" rel="external">OpenGL ES Programming Guide for iOS</a>）</li>
+<li>Metal（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40014221" target="_blank" rel="external">Metal Programming Guide</a>）</li>
+<li>TextKit and Core Text（<a href="https://developer.apple.com/library/prerelease/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009542" target="_blank" rel="external">Text Programming Guide for iOS</a>和<a href="https://developer.apple.com/library/prerelease/ios/documentation/StringsTextFonts/Conceptual/CoreText_Programming/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005533" target="_blank" rel="external"> Core Text Programming Guide</a>）</li>
+<li>Image I/O（<a href="https://developer.apple.com/library/prerelease/ios/documentation/GraphicsImaging/Reference/ImageIORefCollection/index.html#//apple_ref/doc/uid/TP40005102" target="_blank" rel="external">Image I/O Reference Collection</a>）</li>
+<li>Photos Library（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Photos/Reference/Photos_Framework/index.html#//apple_ref/doc/uid/TP40014408" target="_blank" rel="external">Photos Framework Reference</a>）</li>
+</ol>
+<p>这一块内容1，2，3，7，9已经实践过，其余的还没有涉猎，计划在需要的时候再补充。</p>
+<h4 id="Audio&amp;Video_Technologies">Audio&amp;Video Technologies</h4><ol>
+<li>Media Player framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/MediaPlayer/Reference/MediaPlayer_Framework/index.html#//apple_ref/doc/uid/TP40006952" target="_blank" rel="external">Media Player Framework Reference.</a>）</li>
+<li>AV Foundation &amp; AVKit（<a href="https://developer.apple.com/library/prerelease/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40010188" target="_blank" rel="external">AVFoundation Programming Guide</a>）</li>
+<li>OpenAL（<a href="http://www.openal.org" target="_blank" rel="external">http://www.openal.org</a>）</li>
+<li>Core Audio &amp; Core Media（<a href="https://developer.apple.com/library/prerelease/ios/documentation/CoreMedia/Reference/CoreMediaFramework/index.html#//apple_ref/doc/uid/TP40009756" target="_blank" rel="external">Core Media Framework Reference</a>）</li>
+<li>UIImagePickerController（<a href="https://developer.apple.com/library/prerelease/ios/documentation/AudioVideo/Conceptual/CameraAndPhotoLib_TopicsForIOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40010400" target="_blank" rel="external">Camera Programming Topics for iOS</a>）</li>
+</ol>
+<p>这一块基本没有涉猎，主要是没有使用的场景，基础的用法看着API会用，一些比较深的内容还需要大量资料和实践。每个领域都够研究好几年了，只能以后如果开始做这个方面的工作再去挖掘。</p>
+<p>主要覆盖了22个Framework（Assets Library Framework，AV Foundation Framework，AVKit Framework，Core Audio，CoreAudioKit Framework，Core Graphics Framework，Core Image Framework，Core Text Framework，Core Video Framework，Game Controller Framework，GLKit Framework，Image I/O Framework，Media Accessibility Framework，Media Player Framework，Metal Framework，OpenAL Framework，OpenGL ES Framework，Photos Framework，Photos UI Framework，Quartz Core Framework，SceneKit Framework，SpriteKit Framework）</p>
+<p>基本上这两层了解后，页面级的操作没啥大问题，而且写的多了以后，也会慢慢的产生模块化，可扩展的思路，为接下来的进阶打好基础。</p>
+<p>下一篇主要讲剩余的两层学习和衍生出去的相关进阶所需的内容。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>这篇博客不谈具体的技术，谈谈学习iOS开发以来的心得和所得所获，大致的过程分为</p>
+<ol>
+<li>学习之前有哪些基础</li>
+<li>如何入门</li>
+<li>持续学习</li>
+<li>进阶的辛酸</li>
+<li>未来的计划</li>
+</ol>]]>
+    
+    </summary>
+    
+      <category term="study" scheme="http://blog.tracyone.com/tags/study/"/>
+    
+      <category term="工作总结" scheme="http://blog.tracyone.com/categories/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[跳槽随想]]></title>
