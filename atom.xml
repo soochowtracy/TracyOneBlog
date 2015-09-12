@@ -5,7 +5,7 @@
   <subtitle><![CDATA[iOS Rookie]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://blog.tracyone.com//"/>
-  <updated>2015-08-26T08:21:47.000Z</updated>
+  <updated>2015-09-12T14:38:30.000Z</updated>
   <id>http://blog.tracyone.com//</id>
   
   <author>
@@ -14,6 +14,83 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[我的iOS开发之路《下》]]></title>
+    <link href="http://blog.tracyone.com/2015/09/12/%E6%88%91%E7%9A%84iOS%E5%BC%80%E5%8F%91%E4%B9%8B%E8%B7%AF%E3%80%8A%E4%B8%8B%E3%80%8B/"/>
+    <id>http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/</id>
+    <published>2015-09-12T14:37:40.000Z</published>
+    <updated>2015-09-12T14:38:30.000Z</updated>
+    <content type="html"><![CDATA[<p>我的iOS开发之路《下》</p>
+<p>接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。</p>
+<h3 id="Core_Services_Layer">Core Services Layer</h3><p>这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。<br><a id="more"></a></p>
+<ol>
+<li>Peer-to-Peer Services（<a href="https://developer.apple.com/library/prerelease/ios/documentation/MultipeerConnectivity/Reference/MultipeerConnectivityFramework/index.html#//apple_ref/doc/uid/TP40013328" target="_blank" rel="external">Multipeer Connectivity Framework Reference</a>）</li>
+<li>iCloud Storage（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/iCloudDesignGuide/Chapters/Introduction.html#//apple_ref/doc/uid/TP40012094" target="_blank" rel="external">iCloud Design Guide</a>）<br>3.Block Objects（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40007502" target="_blank" rel="external">Blocks Programming Topics</a>）</li>
+<li>Data Protection（<a href="https://developer.apple.com/library/prerelease/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072" target="_blank" rel="external">App Programming Guide for iOS</a>）</li>
+<li>File-Sharing Support（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009247" target="_blank" rel="external">Information Property List Key Reference</a>）</li>
+<li>Grand Central Dispatch（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091" target="_blank" rel="external">Concurrency Programming Guide</a>）</li>
+<li>In-App Purchase（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267" target="_blank" rel="external">In-App Purchase Programming Guide</a>）</li>
+<li>SQLite（<a href="http://www.sqlite.org" target="_blank" rel="external">SQLite Software Library</a>）</li>
+<li>XML Support（<a href="http://xmlsoft.org/index.html" target="_blank" rel="external">documentation for libxml2</a>）</li>
+</ol>
+<p>内容还是很多的，以上这些特性学了个大概，其实这一层涉及的Framework还是很重要的，主要有这些：<br>Accounts Framework，Address Book Framework，Ad Support Framework，CFNetwork Framework，CloudKit Framework，Core Data Framework，Core Foundation Framework，Core Location Framework，Core Media Framework，Core Motion Framework，Core Telephony Framework，EventKit Framework，HealthKit Framework，HomeKit Framework，JavaScript Core Framework，Mobile Core Services Framework，Multipeer Connectivity Framework，NewsstandKit Framework，PassKit Framework，Quick Look Framework，Safari Services Framework，Social Framework，StoreKit Framework，System Configuration Framework，WebKit Framework以及最重要的Foundation Framework。</p>
+<p>写下来才发现自己还有很多内容都没涉及过，求学之路漫漫啊，并且这一层的Framework还是有一定的深度的。尤其需要掌握CFNetwork，Core Foundation，JavaScript Core，和Foundation。</p>
+<h3 id="Core_OS_Layer">Core OS Layer</h3><p>这一层都是偏操作硬件的内容，基本没有涉及，这一层可能平时用的不多，但却构建了很多上一次的框架，为了完整性也列出来需要掌握的内容有哪些：</p>
+<ol>
+<li>Accelerate Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Accelerate/Reference/AccelerateFWRef/index.html#//apple_ref/doc/uid/TP40009465" target="_blank" rel="external">Accelerate Framework Reference</a>）</li>
+<li>Core Bluetooth Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/AboutCoreBluetooth/Introduction.html#//apple_ref/doc/uid/TP40013257" target="_blank" rel="external">Core Bluetooth Programming Guide</a>）</li>
+<li>External Accessory Framework（<a href="https://developer.apple.com/library/prerelease/ios/featuredarticles/ExternalAccessoryPT/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009502" target="_blank" rel="external">External Accessory Programming Topics</a>）</li>
+<li>Generic Security Services Framework</li>
+<li>Local Authentication Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/LocalAuthentication/Reference/LocalAuthentication_Framework/index.html#//apple_ref/doc/uid/TP40014520" target="_blank" rel="external">Local Authentication Framework Reference</a>）</li>
+<li>Security Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Security/Reference/SecurityFrameworkReference/index.html#//apple_ref/doc/uid/TP40004330" target="_blank" rel="external">Security Framework Reference</a>）</li>
+<li>System（<a href="https://developer.apple.com/library/prerelease/ios/documentation/System/Conceptual/ManPages_iPhoneOS/index.html#//apple_ref/doc/uid/TP40007259" target="_blank" rel="external">iOS Manual Pages</a>）</li>
+<li>64-Bit Support（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/CocoaTouch64BitGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40013501" target="_blank" rel="external">64-Bit Transition Guide for Cocoa Touch</a>）</li>
+</ol>
+<p>貌似只有7，8是用过了，还算比较熟悉，这些内容一般开发很少碰到，64位还是被强制了。。。希望以后的开发生涯中也不用再学了 = =。</p>
+<p>在整个持续学习的过程中，加深了对iOS开发的理解，在这个期间也看了两本相关的书《Objective-C高级编程》和《Effective Objective-C 2.0》，还有就是为进阶做准备的一本书《黑客与画家》。</p>
+<h2 id="进阶的辛酸">进阶的辛酸</h2><p>说来惭愧，其实自己也只是一个入门没多久的菜鸟，不敢谈进阶的感想，只能说是看了很多人的分析，再结合自己的经验，写写进阶中的注意点吧。主要从三个维度来分析：</p>
+<ul>
+<li>纵向方面的深度学习</li>
+<li>宏观方面的架构思维</li>
+<li>管理方面的职业素养</li>
+</ul>
+<h3 id="底层基础">底层基础</h3><p>在我持续学习阶段，有些内容感觉很晦涩，看的不是太理解，有些内容，看完又很容易忘，然后就请教了一个大牛，那个大牛给我推荐了三本书：《深入理解计算机系统》，《数据结构与算法分析》，《TCP/IP详解》。说看完以后再回头去想一下之前学的内容，再看一遍之前学的内容，你会有不一样的体会。</p>
+<p>然后就买了这三本书，然后就呵呵了，看的并不是很理解，没办法，拿出大学期间的课本，又重新啃了一遍。总算是有点入门了，然后在看了这三本书，有点感觉了。期间也做了很多笔记，反复的咀嚼，然后学完后和大神去相互验证，这个过程肯定是辛酸的，每次自以为学到了很多东西，在大神眼里其实都是非常基础的内容。但是这反而激发了我不服输的性格，每天学的更拼了，每天学到咳血在睡觉。。。</p>
+<p>收获还是很多的，就拿这次面试过程中，很多问题都是这方面的，还有就是学了这些内容后，再学习其他方面的内容简单很多，而且很锻炼一个人的耐心，能否沉下心去学习，相信一定有收获的。</p>
+<h3 id="架构思路">架构思路</h3><p>这方面还是很薄弱的，毕竟经验不够，不过也大大小小的框架看过，基本思路都是一致的，无非就是分层，分功能，面向接口，抽象化。这方面的学习主要是参考了这几本书《设计模式》，《敏捷设计原则》和《代码大全》。选这几本书也是有原因的，自己在这方面实践的不多，希望能够站在前人的肩膀上，更快一步的理解框架级设计，架构思路。</p>
+<p>在这里我要纠正两个误区：</p>
+<ol>
+<li>客户端有架构</li>
+<li>客户端无架构</li>
+</ol>
+<p>这两点看似矛盾，但是侧重点不一样，之前经常听面试者说，负责XXX客户端架构，但是仔细一问呢，其实只是一些模块化的思想，称之为框架还差不多，谈不上架构。但是呢，客户端其实还是有架构的，不管是应用层，数据层或者是业务层架构，技术结构，比如说：</p>
+<ul>
+<li>你的app有容错设计么？（hotpatch，降级处理，开关）</li>
+<li>你的app有部署方案么？（监控平台，白名单机制）</li>
+</ul>
+<p>当然还有很多，类似高可用性，成本，扩展性这些原则上的内容，基础业务下沉，完整业务流程的整合等问题，在这个过程就没有捷径可以走了，踩得坑多了，就有感悟了。</p>
+<h3 id="职业素养">职业素养</h3><p>这一章本来是不想说的，不过看到了很多恶心的现象，不得不说（竟然还有离职员工公然贩卖上家公司源码的奇葩事）。作为一个程序员，基本的职业素养是必须要有的，除此之外则是要有一颗对极致代码不断追求的心，甭管是命名规范也好，设计原则也好。</p>
+<p>在这个阶段，我主要看了这两本书：《程序员修炼之道：从小工到专家》，《程序员职业素养》，都是我自认为很经典的书，一本是教你写好代码，一本是教你做好人。</p>
+<p>当然等你牛逼了，自然而然的，你需要去学一些管理方面的姿势，不管是项目管理还是团队管理，那软件工程这一方面的书就必不可少了《人月神话》和《人件》都是不错的经典书籍。</p>
+<p>之所以叫这个阶段是进阶的辛酸，就是因为我还远没有出师，还在这个阶段徜徉呢 = =。也希望在未来的4年能够突破这个阶段，回头再来看这些话时的感慨和好笑吧。</p>
+<h2 id="方向&amp;目标">方向&amp;目标</h2><p>架构师（不仅仅局限于iOS）一直是我当程序员以来的梦想，今后也将为之不懈努力，要学的东西太多了，iOS深层次的内容，安卓，服务端，前端，数据库等等，相信未来看的书肯定还会有更多，最近打算买了两本关于Unix的书，学好服务端架构，再整合客户端，形成一个链，而不是独立的看待。</p>
+<p>先给自己顶个短期目标：两个月内能够看懂同事写的安卓代码，并且能够debug。</p>
+<p>在这里不得不吐槽一句，现在真的是很忙很忙！看书的时间明显减少了，只能挤出时间学习了，上班的路上，蹲坑的时候都可以想想问题，也许灵光就在那一瞬间，然后就掉下去了。。。</p>
+<h2 id="小尾巴">小尾巴</h2><p>还有就是有幸能和大神们交流也是极好的，吹牛也有资本啊。然后说说大公司的优势吧，开阔眼界，身边牛人比较多，随时能问一些疑难杂症，规范化，以及流程繁琐！</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>我的iOS开发之路《下》</p>
+<p>接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。</p>
+<h3 id="Core_Services_Layer">Core Services Layer</h3><p>这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。<br>]]>
+    
+    </summary>
+    
+      <category term="study" scheme="http://blog.tracyone.com/tags/study/"/>
+    
+      <category term="工作总结" scheme="http://blog.tracyone.com/categories/%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[我的iOS开发之路《上》]]></title>

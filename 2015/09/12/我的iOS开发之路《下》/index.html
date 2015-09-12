@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的iOS开发之路《下》 | TracyOne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="我的iOS开发之路《下》
+接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。
+Core Services Layer这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我的iOS开发之路《下》">
+<meta property="og:url" content="http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/index.html">
+<meta property="og:site_name" content="TracyOne">
+<meta property="og:description" content="我的iOS开发之路《下》
+接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。
+Core Services Layer这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。">
+<meta property="og:updated_time" content="2015-09-12T14:38:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我的iOS开发之路《下》">
+<meta name="twitter:description" content="我的iOS开发之路《下》
+接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。
+Core Services Layer这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href='font/fonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?fc6ac8ae95352665bd78e06dd31346e3";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">TracyOne</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/categories">Categories</a>
+        
+          <a class="main-nav-link" href="/tags">Tags</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/categories">Categories</a></td>
+      
+        <td><a class="main-nav-link" href="/tags">Tags</a></td>
+      
+        <td><a class="main-nav-link" href="/about">About</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://blog.tracyone.com"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/images/avatar.jpg">
+      <h2 id="name">Tracy Wang</h2>
+      <h3 id="title">iOS Rookie</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Suzhou, China</span>
+      <a id="follow" href="http://weibo.com/5626121788">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        15
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        10
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/soochowtracy" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+        
+          <td><a href="http://weibo.com/5626121788" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+        
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+    
+  </div>
+</aside>
+      <section id="main"><article id="post-我的iOS开发之路《下》" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      我的iOS开发之路《下》
+    </h1>
+  
+
+        <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/09/12/我的iOS开发之路《下》/">
+    <time datetime="2015-09-12T14:37:40.000Z" itemprop="datePublished">2015-09-12</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/工作总结/">工作总结</a>
+  </div>
+
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我的iOS开发之路《下》</p>
+<p>接上一篇把剩余的内容分析出来，主要涉及持续学习的一部分，进阶的辛酸和未来的计划。</p>
+<h3 id="Core_Services_Layer">Core Services Layer</h3><p>这一层属于比较底层的知识了，也是非常重要的，个人感觉比media那一层更实用，主要涉及的内容有这些。<br><a id="more"></a></p>
+<ol>
+<li>Peer-to-Peer Services（<a href="https://developer.apple.com/library/prerelease/ios/documentation/MultipeerConnectivity/Reference/MultipeerConnectivityFramework/index.html#//apple_ref/doc/uid/TP40013328" target="_blank" rel="external">Multipeer Connectivity Framework Reference</a>）</li>
+<li>iCloud Storage（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/iCloudDesignGuide/Chapters/Introduction.html#//apple_ref/doc/uid/TP40012094" target="_blank" rel="external">iCloud Design Guide</a>）<br>3.Block Objects（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40007502" target="_blank" rel="external">Blocks Programming Topics</a>）</li>
+<li>Data Protection（<a href="https://developer.apple.com/library/prerelease/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072" target="_blank" rel="external">App Programming Guide for iOS</a>）</li>
+<li>File-Sharing Support（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009247" target="_blank" rel="external">Information Property List Key Reference</a>）</li>
+<li>Grand Central Dispatch（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091" target="_blank" rel="external">Concurrency Programming Guide</a>）</li>
+<li>In-App Purchase（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267" target="_blank" rel="external">In-App Purchase Programming Guide</a>）</li>
+<li>SQLite（<a href="http://www.sqlite.org" target="_blank" rel="external">SQLite Software Library</a>）</li>
+<li>XML Support（<a href="http://xmlsoft.org/index.html" target="_blank" rel="external">documentation for libxml2</a>）</li>
+</ol>
+<p>内容还是很多的，以上这些特性学了个大概，其实这一层涉及的Framework还是很重要的，主要有这些：<br>Accounts Framework，Address Book Framework，Ad Support Framework，CFNetwork Framework，CloudKit Framework，Core Data Framework，Core Foundation Framework，Core Location Framework，Core Media Framework，Core Motion Framework，Core Telephony Framework，EventKit Framework，HealthKit Framework，HomeKit Framework，JavaScript Core Framework，Mobile Core Services Framework，Multipeer Connectivity Framework，NewsstandKit Framework，PassKit Framework，Quick Look Framework，Safari Services Framework，Social Framework，StoreKit Framework，System Configuration Framework，WebKit Framework以及最重要的Foundation Framework。</p>
+<p>写下来才发现自己还有很多内容都没涉及过，求学之路漫漫啊，并且这一层的Framework还是有一定的深度的。尤其需要掌握CFNetwork，Core Foundation，JavaScript Core，和Foundation。</p>
+<h3 id="Core_OS_Layer">Core OS Layer</h3><p>这一层都是偏操作硬件的内容，基本没有涉及，这一层可能平时用的不多，但却构建了很多上一次的框架，为了完整性也列出来需要掌握的内容有哪些：</p>
+<ol>
+<li>Accelerate Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Accelerate/Reference/AccelerateFWRef/index.html#//apple_ref/doc/uid/TP40009465" target="_blank" rel="external">Accelerate Framework Reference</a>）</li>
+<li>Core Bluetooth Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/AboutCoreBluetooth/Introduction.html#//apple_ref/doc/uid/TP40013257" target="_blank" rel="external">Core Bluetooth Programming Guide</a>）</li>
+<li>External Accessory Framework（<a href="https://developer.apple.com/library/prerelease/ios/featuredarticles/ExternalAccessoryPT/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009502" target="_blank" rel="external">External Accessory Programming Topics</a>）</li>
+<li>Generic Security Services Framework</li>
+<li>Local Authentication Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/LocalAuthentication/Reference/LocalAuthentication_Framework/index.html#//apple_ref/doc/uid/TP40014520" target="_blank" rel="external">Local Authentication Framework Reference</a>）</li>
+<li>Security Framework（<a href="https://developer.apple.com/library/prerelease/ios/documentation/Security/Reference/SecurityFrameworkReference/index.html#//apple_ref/doc/uid/TP40004330" target="_blank" rel="external">Security Framework Reference</a>）</li>
+<li>System（<a href="https://developer.apple.com/library/prerelease/ios/documentation/System/Conceptual/ManPages_iPhoneOS/index.html#//apple_ref/doc/uid/TP40007259" target="_blank" rel="external">iOS Manual Pages</a>）</li>
+<li>64-Bit Support（<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/CocoaTouch64BitGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40013501" target="_blank" rel="external">64-Bit Transition Guide for Cocoa Touch</a>）</li>
+</ol>
+<p>貌似只有7，8是用过了，还算比较熟悉，这些内容一般开发很少碰到，64位还是被强制了。。。希望以后的开发生涯中也不用再学了 = =。</p>
+<p>在整个持续学习的过程中，加深了对iOS开发的理解，在这个期间也看了两本相关的书《Objective-C高级编程》和《Effective Objective-C 2.0》，还有就是为进阶做准备的一本书《黑客与画家》。</p>
+<h2 id="进阶的辛酸">进阶的辛酸</h2><p>说来惭愧，其实自己也只是一个入门没多久的菜鸟，不敢谈进阶的感想，只能说是看了很多人的分析，再结合自己的经验，写写进阶中的注意点吧。主要从三个维度来分析：</p>
+<ul>
+<li>纵向方面的深度学习</li>
+<li>宏观方面的架构思维</li>
+<li>管理方面的职业素养</li>
+</ul>
+<h3 id="底层基础">底层基础</h3><p>在我持续学习阶段，有些内容感觉很晦涩，看的不是太理解，有些内容，看完又很容易忘，然后就请教了一个大牛，那个大牛给我推荐了三本书：《深入理解计算机系统》，《数据结构与算法分析》，《TCP/IP详解》。说看完以后再回头去想一下之前学的内容，再看一遍之前学的内容，你会有不一样的体会。</p>
+<p>然后就买了这三本书，然后就呵呵了，看的并不是很理解，没办法，拿出大学期间的课本，又重新啃了一遍。总算是有点入门了，然后在看了这三本书，有点感觉了。期间也做了很多笔记，反复的咀嚼，然后学完后和大神去相互验证，这个过程肯定是辛酸的，每次自以为学到了很多东西，在大神眼里其实都是非常基础的内容。但是这反而激发了我不服输的性格，每天学的更拼了，每天学到咳血在睡觉。。。</p>
+<p>收获还是很多的，就拿这次面试过程中，很多问题都是这方面的，还有就是学了这些内容后，再学习其他方面的内容简单很多，而且很锻炼一个人的耐心，能否沉下心去学习，相信一定有收获的。</p>
+<h3 id="架构思路">架构思路</h3><p>这方面还是很薄弱的，毕竟经验不够，不过也大大小小的框架看过，基本思路都是一致的，无非就是分层，分功能，面向接口，抽象化。这方面的学习主要是参考了这几本书《设计模式》，《敏捷设计原则》和《代码大全》。选这几本书也是有原因的，自己在这方面实践的不多，希望能够站在前人的肩膀上，更快一步的理解框架级设计，架构思路。</p>
+<p>在这里我要纠正两个误区：</p>
+<ol>
+<li>客户端有架构</li>
+<li>客户端无架构</li>
+</ol>
+<p>这两点看似矛盾，但是侧重点不一样，之前经常听面试者说，负责XXX客户端架构，但是仔细一问呢，其实只是一些模块化的思想，称之为框架还差不多，谈不上架构。但是呢，客户端其实还是有架构的，不管是应用层，数据层或者是业务层架构，技术结构，比如说：</p>
+<ul>
+<li>你的app有容错设计么？（hotpatch，降级处理，开关）</li>
+<li>你的app有部署方案么？（监控平台，白名单机制）</li>
+</ul>
+<p>当然还有很多，类似高可用性，成本，扩展性这些原则上的内容，基础业务下沉，完整业务流程的整合等问题，在这个过程就没有捷径可以走了，踩得坑多了，就有感悟了。</p>
+<h3 id="职业素养">职业素养</h3><p>这一章本来是不想说的，不过看到了很多恶心的现象，不得不说（竟然还有离职员工公然贩卖上家公司源码的奇葩事）。作为一个程序员，基本的职业素养是必须要有的，除此之外则是要有一颗对极致代码不断追求的心，甭管是命名规范也好，设计原则也好。</p>
+<p>在这个阶段，我主要看了这两本书：《程序员修炼之道：从小工到专家》，《程序员职业素养》，都是我自认为很经典的书，一本是教你写好代码，一本是教你做好人。</p>
+<p>当然等你牛逼了，自然而然的，你需要去学一些管理方面的姿势，不管是项目管理还是团队管理，那软件工程这一方面的书就必不可少了《人月神话》和《人件》都是不错的经典书籍。</p>
+<p>之所以叫这个阶段是进阶的辛酸，就是因为我还远没有出师，还在这个阶段徜徉呢 = =。也希望在未来的4年能够突破这个阶段，回头再来看这些话时的感慨和好笑吧。</p>
+<h2 id="方向&amp;目标">方向&amp;目标</h2><p>架构师（不仅仅局限于iOS）一直是我当程序员以来的梦想，今后也将为之不懈努力，要学的东西太多了，iOS深层次的内容，安卓，服务端，前端，数据库等等，相信未来看的书肯定还会有更多，最近打算买了两本关于Unix的书，学好服务端架构，再整合客户端，形成一个链，而不是独立的看待。</p>
+<p>先给自己顶个短期目标：两个月内能够看懂同事写的安卓代码，并且能够debug。</p>
+<p>在这里不得不吐槽一句，现在真的是很忙很忙！看书的时间明显减少了，只能挤出时间学习了，上班的路上，蹲坑的时候都可以想想问题，也许灵光就在那一瞬间，然后就掉下去了。。。</p>
+<h2 id="小尾巴">小尾巴</h2><p>还有就是有幸能和大神们交流也是极好的，吹牛也有资本啊。然后说说大公司的优势吧，开阔眼界，身边牛人比较多，随时能问一些疑难杂症，规范化，以及流程繁琐！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/" data-id="cieh6snpg000pd40seb6w17qp" class="article-share-link">分享到</a>
+      
+        <a href="http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/#ds-thread" class="article-comment-link">评论</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/study/">study</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/08/26/我的iOS开发之路《上》/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">我的iOS开发之路《上》</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/" data-title="我的iOS开发之路《下》" data-url="http://blog.tracyone.com/2015/09/12/我的iOS开发之路《下》/">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by DuoShuo.</a></noscript>
+      </div>
+  </section>
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="">
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/09/12/我的iOS开发之路《下》/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/工作总结/">工作总结</a></p>
+              <p class="item-title"><a href="/2015/09/12/我的iOS开发之路《下》/" class="title">我的iOS开发之路《下》</a></p>
+              <p class="item-date"><time datetime="2015-09-12T14:37:40.000Z" itemprop="datePublished">2015-09-12</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/08/26/我的iOS开发之路《上》/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/工作总结/">工作总结</a></p>
+              <p class="item-title"><a href="/2015/08/26/我的iOS开发之路《上》/" class="title">我的iOS开发之路《上》</a></p>
+              <p class="item-date"><time datetime="2015-08-26T08:15:30.000Z" itemprop="datePublished">2015-08-26</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/08/22/跳槽随想/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/工作总结/">工作总结</a></p>
+              <p class="item-title"><a href="/2015/08/22/跳槽随想/" class="title">跳槽随想</a></p>
+              <p class="item-date"><time datetime="2015-08-22T07:42:26.000Z" itemprop="datePublished">2015-08-22</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/07/18/Effective-Obj-C-二/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/07/18/Effective-Obj-C-二/" class="title">Effective Obj-C &lt;二&gt;</a></p>
+              <p class="item-date"><time datetime="2015-07-18T09:36:17.000Z" itemprop="datePublished">2015-07-18</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-thumbnail">
+              <a href="/2015/07/08/Effective-Obj-C-一/" class="thumbnail">
+  
+    <span class="thumbnail-image thumbnail-none"></span>
+  
+</a>
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/iOS/">iOS</a></p>
+              <p class="item-title"><a href="/2015/07/08/Effective-Obj-C-一/" class="title">Effective Obj-C &lt;一&gt;</a></p>
+              <p class="item-date"><time datetime="2015-07-08T12:31:36.000Z" itemprop="datePublished">2015-07-08</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Computer-Networks/">Computer Networks</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Computer-System/">Computer System</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataStructures-Algorithm/">DataStructures & Algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作总结/">工作总结</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARC/">ARC</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS/">CS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreData/">CoreData</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCD/">GCD</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithm/">algorithm</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/block/">block</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/effective/">effective</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/">life</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/study/">study</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ARC/" style="font-size: 20px;">ARC</a> <a href="/tags/CS/" style="font-size: 10px;">CS</a> <a href="/tags/CoreData/" style="font-size: 10px;">CoreData</a> <a href="/tags/GCD/" style="font-size: 10px;">GCD</a> <a href="/tags/algorithm/" style="font-size: 10px;">algorithm</a> <a href="/tags/block/" style="font-size: 15px;">block</a> <a href="/tags/effective/" style="font-size: 15px;">effective</a> <a href="/tags/http/" style="font-size: 10px;">http</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/study/" style="font-size: 15px;">study</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 Tracy Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tracy-one"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
